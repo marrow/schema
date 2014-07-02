@@ -1,9 +1,19 @@
 language: python
-python:
-  - "2.6"
-  - "2.7"
-  - "3.1"
-  - "3.2"
-install:
-  - pip install -e . --use-mirrors
-script: python setup.py test
+
+env:
+	- TOXENV=pypy
+	- TOXENV=py27
+	- TOXENV=py32
+	- TOXENV=py33
+	- TOXENV=py34
+
+install: .travis/install.sh
+
+script: .travis/run.sh
+
+notifications:
+	irc:
+		channels:
+			- 'irc.freenode.org#webcore'
+		use_notice: true
+		skip_join: true
