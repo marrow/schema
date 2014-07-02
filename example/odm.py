@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from decimal import Decimal as decimal, ROUND_HALF_UP
-from marrow.schema.declarative import NoDefault, BaseAttribute, Attribute
-from marrow.schema.util import DeclarativeAttributes
+from marrow.schema.declarative import nil, Container, Attribute
+from marrow.schema.util import Attributes
 from marrow.util.url import URL as url
 from marrow.util.convert import boolean
 from bson import ObjectId
@@ -18,7 +18,7 @@ class ValidationError(Exception):
 # These provide an API for conversions between database and Python data structures.
 # "Settings" can be added by attaching Attribute instances.
 
-class Transform(BaseAttribute):
+class Transform(Container):
     """Convert a value between Python-native and database-friendly datatypes."""
     
     def __call__(self, value):
@@ -92,7 +92,7 @@ class Field(Attribute):
                 del obj[self._key]
                 return
         
-        if self.required and value in (None, NoDefault):
+        if self.required and value in (None, nil):
             raise ValidationError("Required fields can not be empty or omitted.")
         
         if self.choices and value not in self.choices:
@@ -208,8 +208,8 @@ class ImageGridFilesystem(GridFilesystem):
 # Basic document class.
 # Pretend this has accessors for 'objects' (the queryset) etc.
 
-class Document(BaseAttribute):
-    __fields__ = DeclarativeAttributes(Field)
+class Document(Container):
+    __fields__ = Attributes(Field)
 
 
 # The actual sample follows.
