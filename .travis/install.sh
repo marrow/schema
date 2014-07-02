@@ -7,3 +7,4 @@ git config --global user.name "Travis: Marrow"
 
 pip install --upgrade setuptools
 pip install tox
+pip install python-coveralls

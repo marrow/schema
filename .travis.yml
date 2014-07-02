@@ -17,3 +17,6 @@ notifications:
       - 'irc.freenode.org#webcore'
     use_notice: true
     skip_join: true
+
+after_success:
+  - coveralls
