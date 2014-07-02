@@ -149,14 +149,26 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 
 .. |masterstatus| image:: http://img.shields.io/travis/marrow/marrow.script/master.svg?style=flat
+    :target: https://travis-ci.org/marrow/marrow.schema
+    :alt: Release Build Status
 
 .. |developstatus| image:: http://img.shields.io/travis/marrow/marrow.script/develop.svg?style=flat
+    :target: https://travis-ci.org/marrow/marrow.schema
+    :alt: Development Build Status
 
-.. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg
+.. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
+    :target: https://pypi.python.org/pypi/marrow.schema
+    :alt: Latest Version
 
 .. |mastercover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/master.svg?style=flat
+    :target: https://travis-ci.org/marrow/marrow.schema
+    :alt: Release Test Coverage
 
 .. |developcover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/develop.svg?style=flat
+    :target: https://travis-ci.org/marrow/marrow.schema
+    :alt: Development Test Coverage
 
 .. |issuecount| image:: http://img.shields.io/github/issues/marrow/marrow.schema.svg?style=flat
+    :target: https://github.com/marrow/marrow.schema/issues
+    :alt: Github Issues
 
