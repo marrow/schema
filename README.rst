@@ -67,7 +67,7 @@ side-effects when updating.  Use ``marrow.schema<1.1`` to get all bugfixes for t
 
 
 2.1. Development Version |developstatus| |cake| |developcover|
--------------------------------------------------------
+--------------------------------------------------------------
 
 Development takes place on `GitHub <https://github.com/>`_ in the
 `marrow.schema <https://github.com/marrow/marrow.schema/>`_ project.  Issue tracking, documentation, and downloads
