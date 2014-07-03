@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+"""Release information about Marrow Schema."""
+
 from collections import namedtuple
 
 
