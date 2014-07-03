@@ -4,7 +4,6 @@
 import os
 import sys
 import codecs
-import warnings
 
 try:
 	from setuptools.core import setup, find_packages
@@ -68,7 +67,7 @@ setup(
 			"Topic :: Software Development :: Libraries :: Python Modules"
 		],
 	
-	packages = find_packages(exclude=['test', 'script']),
+	packages = find_packages(exclude=['test', 'script', 'example']),
 	include_package_data = True,
 	namespace_packages = ['marrow'],
 	
