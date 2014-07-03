@@ -66,8 +66,10 @@ side-effects when updating.  Use ``marrow.schema<1.1`` to get all bugfixes for t
 ``marrow.schema<2.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
 
 
-2.1. Development Version |developstatus| |developcover|
---------------------------------------------------------------
+2.1. Development Version
+------------------------
+
+    |developstatus| |developcover|
 
 Development takes place on `GitHub <https://github.com/>`_ in the
 `marrow.schema <https://github.com/marrow/marrow.schema/>`_ project.  Issue tracking, documentation, and downloads
@@ -173,5 +175,3 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     :alt: Github Issues
 
 .. |cake| image:: http://img.shields.io/badge/cake-lie-1b87fb.svg?style=flat
-    :target: https://github.com/badges/shields/issues/208
-    :alt: Build is Succeeding
