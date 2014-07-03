@@ -10,7 +10,7 @@ Marrow Schema
 
 ..
 
-    |latestversion| |masterstatus| |cake| |mastercover| |issuecount|
+    |latestversion| |masterstatus| |mastercover| |issuecount|
 
 1. What is Marrow Schema?
 =========================
@@ -66,7 +66,7 @@ side-effects when updating.  Use ``marrow.schema<1.1`` to get all bugfixes for t
 ``marrow.schema<2.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
 
 
-2.1. Development Version |developstatus| |cake| |developcover|
+2.1. Development Version |developstatus| |developcover|
 --------------------------------------------------------------
 
 Development takes place on `GitHub <https://github.com/>`_ in the
@@ -148,11 +148,11 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-.. |masterstatus| image:: http://img.shields.io/travis/marrow/marrow.script/master.svg?style=flat
+.. |masterstatus| image:: http://img.shields.io/travis/marrow/marrow.schema/master.svg?style=flat
     :target: https://travis-ci.org/marrow/marrow.schema
     :alt: Release Build Status
 
-.. |developstatus| image:: http://img.shields.io/travis/marrow/marrow.script/develop.svg?style=flat
+.. |developstatus| image:: http://img.shields.io/travis/marrow/marrow.schema/develop.svg?style=flat
     :target: https://travis-ci.org/marrow/marrow.schema
     :alt: Development Build Status
 
