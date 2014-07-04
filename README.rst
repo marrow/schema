@@ -139,6 +139,8 @@ Version 1.0.1
 
 * Compatibility with Python 2.6.
 
+* Added pypy3 to test suite.
+
 
 5. License
 ==========
