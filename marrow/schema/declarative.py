@@ -35,7 +35,7 @@ class Container(Element):
 					', '.join(duplicates)
 				))
 		
-		result = dict(kw, **{names[i]: arg for i, arg in enumerate(args)})
+		result = dict(kw, **dict((names[i], arg) for i, arg in enumerate(args)))
 		unknown = set(result.keys()) - set(self.__attributes__.keys())
 		
 		if unknown:

@@ -71,8 +71,7 @@ setup(
 	include_package_data = True,
 	namespace_packages = ['marrow'],
 	
-	install_requires=[
-		],
+	install_requires = ['ordereddict'] if sys.version_info < (2, 7) else [],
 	
 	extras_require = dict(
 			development = tests_require,
