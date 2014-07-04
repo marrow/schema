@@ -126,12 +126,26 @@ on that container.  Can provide a filter (which uses ``isinstance``) to limit to
 Always results in an ``OrderedDict``.
 
 
-4. License
+4. Version History
+==================
+
+Version 1.0
+-----------
+
+* Initial release.
+
+Version 1.0.1
+-------------
+
+* Compatibility with Python 2.6.
+
+
+5. License
 ==========
 
 Marrow Schema has been released under the MIT Open Source license.
 
-4.1. The MIT License
+5.1. The MIT License
 --------------------
 
 Copyright © 2013-2014 Alice Bevan-McGregor and contributors.
