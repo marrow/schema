@@ -1,6 +1,9 @@
 # encoding: utf-8
 
-from collections import OrderedDict
+try:  # pragma: no cover
+	from collections import OrderedDict
+except ImportError:  # pragma: no cover
+	from ordereddict import OrderedDict
 
 from .declarative import Container, Attribute
 

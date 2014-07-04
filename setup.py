@@ -4,7 +4,6 @@
 import os
 import sys
 import codecs
-import warnings
 
 try:
 	from setuptools.core import setup, find_packages
@@ -43,7 +42,7 @@ setup(
 	version = version,
 	
 	description = description,
-	long_description = codecs.open(os.path.join(here, 'README.rst'), 'r').read(),
+	long_description = codecs.open(os.path.join(here, 'README.rst'), 'r', 'utf8').read(),
 	url = url,
 	
 	author = author.name,
@@ -68,12 +67,11 @@ setup(
 			"Topic :: Software Development :: Libraries :: Python Modules"
 		],
 	
-	packages = find_packages(exclude=['test', 'script']),
+	packages = find_packages(exclude=['test', 'script', 'example']),
 	include_package_data = True,
 	namespace_packages = ['marrow'],
 	
-	install_requires=[
-		],
+	install_requires = ['ordereddict'] if sys.version_info < (2, 7) else [],
 	
 	extras_require = dict(
 			development = tests_require,

@@ -7,7 +7,10 @@ This handles the irregularities of metaclass definition and usage across Python 
 
 import sys
 
-from collections import OrderedDict
+try:  # pragma: no cover
+	from collections import OrderedDict
+except ImportError:  # pragma: no cover
+	from ordereddict import OrderedDict
 
 
 class ElementMeta(type):
