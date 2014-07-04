@@ -10,7 +10,7 @@ Marrow Schema
 
 ..
 
-    |latestversion| |masterstatus| |mastercover| |issuecount|
+    |latestversion| |downloads| |masterstatus| |mastercover| |issuecount|
 
 1. What is Marrow Schema?
 =========================
@@ -161,6 +161,10 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 .. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
     :target: https://pypi.python.org/pypi/marrow.schema
     :alt: Latest Version
+
+.. |downloads| image:: http://img.shields.io/pypi/dw/marrow.schema.svg?style=flat
+    :target: https://pypi.python.org/pypi/marrow.schema
+    :alt: Downloads per Week
 
 .. |mastercover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/master.svg?style=flat
     :target: https://travis-ci.org/marrow/marrow.schema
