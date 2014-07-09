@@ -33,7 +33,7 @@ def test_element_name():
 	assert TestElement.bar.__name__ == 'bar'
 
 
-def test_element_hardcoding():
+def test_element_hardcoding():  # Issue #5: https://github.com/marrow/marrow.schema/issues/5
 	class TestElement(Element):
 		foo = Element()
 		bar = Element()
@@ -45,7 +45,7 @@ def test_element_hardcoding():
 	assert ElementSubclass.__attributes__ == dict(foo=TestElement.foo)
 
 
-def test_element_preserve_order():
+def test_element_preserve_order():  # Issue #1: https://github.com/marrow/marrow.schema/issues/1
 	class TestElement(Element):
 		foo = Element()
 		bar = Element()
@@ -58,7 +58,7 @@ def test_element_preserve_order():
 	assert ElementSubclass.__attributes__.keys() == TestElement.__attributes__.keys()
 
 
-def test_element_inclusion_callbacks():
+def test_element_inclusion_callbacks():  # Issue #7: https://github.com/marrow/marrow.schema/issues/7
 	class ElementSubclass(Element):
 		called = False
 		
@@ -71,7 +71,7 @@ def test_element_inclusion_callbacks():
 	assert TestElement.foo.called
 
 
-def test_element_construction_callback():
+def test_element_construction_callback():  # Issue #7: https://github.com/marrow/marrow.schema/issues/7
 	class TestElement(Element):
 		called = False
 		
