@@ -31,6 +31,11 @@ class ElementMeta(type):
 			if hasattr(base, '__attributes__'):
 				attributes.update(base.__attributes__)
 		
+		# To allow for hardcoding of Attributes we eliminate keys that have been redefined.
+		# They might get added back later, of course.
+		for k in attrs:
+			attributes.pop(k, None)
+		
 		def process(name, attr):
 			if not getattr(attr, '__name__', None):
 				attr.__name__ = name

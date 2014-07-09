@@ -31,3 +31,15 @@ def test_element_name():
 	
 	assert TestElement.foo.__name__ == 'foo'
 	assert TestElement.bar.__name__ == 'bar'
+
+
+def test_element_hardcoding():
+	class TestElement(Element):
+		foo = Element()
+		bar = Element()
+	
+	class ElementSubclass(TestElement):
+		bar = 27
+	
+	assert len(TestElement.__attributes__) == 2
+	assert ElementSubclass.__attributes__ == dict(foo=TestElement.foo)
