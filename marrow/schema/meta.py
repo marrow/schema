@@ -5,12 +5,7 @@
 This handles the irregularities of metaclass definition and usage across Python versions.
 """
 
-import sys
-
-try:  # pragma: no cover
-	from collections import OrderedDict
-except ImportError:  # pragma: no cover
-	from ordereddict import OrderedDict
+from .compat import odict
 
 
 class ElementMeta(type):
@@ -22,10 +17,10 @@ class ElementMeta(type):
 		"""Gather known attributes together, preserving order, and transfer attribute names to them."""
 		
 		if len(bases) == 1 and bases[0] is object:
-			attrs['__attributes__'] = OrderedDict()
+			attrs['__attributes__'] = odict()
 			return type.__new__(meta, name, bases, attrs)
 		
-		attributes = OrderedDict()
+		attributes = odict()
 		overridden_sequence = dict()
 		fixups = []
 		
@@ -55,7 +50,7 @@ class ElementMeta(type):
 		
 		attributes.update(process(k, v) for k, v in attrs.items() if isinstance(v, Element))
 		
-		attrs['__attributes__'] = OrderedDict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
+		attrs['__attributes__'] = odict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
 		
 		result = type.__new__(meta, name, bases, attrs)
 		

@@ -1,10 +1,6 @@
 # encoding: utf-8
 
-try:  # pragma: no cover
-	from collections import OrderedDict
-except ImportError:  # pragma: no cover
-	from ordereddict import OrderedDict
-
+from .compat import odict
 from .declarative import Container, Attribute
 
 
@@ -21,7 +17,7 @@ class Attributes(Container):
 		if not self.only:
 			return obj.__attributes__.copy()
 		
-		return OrderedDict((k, v) for k, v in obj.__attributes__.items() if isinstance(v, self.only))
+		return odict((k, v) for k, v in obj.__attributes__.items() if isinstance(v, self.only))
 
 
 def ensure_tuple(length, tuples):
