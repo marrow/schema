@@ -26,6 +26,7 @@ class ElementMeta(type):
 			return type.__new__(meta, name, bases, attrs)
 		
 		attributes = OrderedDict()
+		overridden_sequence = dict()
 		
 		for base in bases:
 			if hasattr(base, '__attributes__'):
@@ -34,19 +35,22 @@ class ElementMeta(type):
 		# To allow for hardcoding of Attributes we eliminate keys that have been redefined.
 		# They might get added back later, of course.
 		for k in attrs:
-			attributes.pop(k, None)
+			if k in attributes:
+				overridden_sequence[k] = attributes[k].__sequence__
+				attributes.pop(k, None)
 		
 		def process(name, attr):
 			if not getattr(attr, '__name__', None):
 				attr.__name__ = name
+			
+			if name in overridden_sequence:
+				attr.__sequence__ = overridden_sequence[name]
+			
 			return name, attr
 		
-		for k, v in sorted(
-				(process(k, v) for k, v in attrs.items() if isinstance(v, Element)),
-				key = lambda t: t[1].__sequence__):
-			attributes[k] = v
+		attributes.update(process(k, v) for k, v in attrs.items() if isinstance(v, Element))
 		
-		attrs['__attributes__'] = attributes
+		attrs['__attributes__'] = OrderedDict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
 		
 		return type.__new__(meta, name, bases, attrs)
 	

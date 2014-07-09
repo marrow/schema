@@ -43,3 +43,16 @@ def test_element_hardcoding():
 	
 	assert len(TestElement.__attributes__) == 2
 	assert ElementSubclass.__attributes__ == dict(foo=TestElement.foo)
+
+
+def test_element_preserve_order():
+	class TestElement(Element):
+		foo = Element()
+		bar = Element()
+	
+	class ElementSubclass(TestElement):
+		foo = Element()
+	
+	assert ElementSubclass.foo is not TestElement.foo
+	assert ElementSubclass.foo.__sequence__ == TestElement.foo.__sequence__
+	assert ElementSubclass.__attributes__.keys() == TestElement.__attributes__.keys()
