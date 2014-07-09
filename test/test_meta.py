@@ -56,3 +56,27 @@ def test_element_preserve_order():
 	assert ElementSubclass.foo is not TestElement.foo
 	assert ElementSubclass.foo.__sequence__ == TestElement.foo.__sequence__
 	assert ElementSubclass.__attributes__.keys() == TestElement.__attributes__.keys()
+
+
+def test_element_inclusion_callbacks():
+	class ElementSubclass(Element):
+		called = False
+		
+		def __fixup__(self, cls):
+			self.called = True
+	
+	class TestElement(Element):
+		foo = ElementSubclass()
+	
+	assert TestElement.foo.called
+
+
+def test_element_construction_callback():
+	class TestElement(Element):
+		called = False
+		
+		@classmethod
+		def __attributed__(cls):
+			cls.called = True
+	
+	assert TestElement.called

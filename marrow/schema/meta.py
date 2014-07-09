@@ -27,6 +27,7 @@ class ElementMeta(type):
 		
 		attributes = OrderedDict()
 		overridden_sequence = dict()
+		fixups = []
 		
 		for base in bases:
 			if hasattr(base, '__attributes__'):
@@ -46,13 +47,25 @@ class ElementMeta(type):
 			if name in overridden_sequence:
 				attr.__sequence__ = overridden_sequence[name]
 			
+			# We give attributes a chance to perform additional work.
+			if hasattr(attr, '__fixup__'):
+				fixups.append(attr)  # Record the attribute to prevent __get__ transformation later.
+			
 			return name, attr
 		
 		attributes.update(process(k, v) for k, v in attrs.items() if isinstance(v, Element))
 		
 		attrs['__attributes__'] = OrderedDict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
 		
-		return type.__new__(meta, name, bases, attrs)
+		result = type.__new__(meta, name, bases, attrs)
+		
+		if hasattr(result, '__attributed__'):
+			result.__attributed__()
+		
+		for obj in fixups:
+			obj.__fixup__(result)
+		
+		return result
 	
 	def __call__(meta, *args, **kw):
 		"""Automatically give each new instance an atomically incrementing sequence number."""
