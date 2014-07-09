@@ -2,10 +2,15 @@
 
 import sys
 
-if sys.version_info > (3, ):  # pragma: no cover
+py2 = sys.version_info < (3, )
+py3 = sys.version_info > (3, )
+
+if py3:  # pragma: no cover
 	unicode = str
 	str = bytes
 else:  # pragma: no cover
+	unicode = unicode
+	str = str
 	range = xrange
 
 try:  # pragma: no cover
