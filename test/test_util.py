@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-import pytest
-
 from marrow.schema.declarative import Container, Attribute
 from marrow.schema.util import Attributes, ensure_tuple
 
@@ -54,4 +52,3 @@ def test_ensure_tuples():
 	assert b[1] == (2, 3)
 	assert b[2] == (3, 4)
 	assert b[3] == ("foo", "foo")
-
