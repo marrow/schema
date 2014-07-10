@@ -141,6 +141,17 @@ Version 1.0.1
 
 * Added pypy3 to test suite.
 
+Version 1.0.2
+-------------
+
+* Callbacks are now provided to inform attributes when they are defined, and for containers when they likewise defined.
+
+* If an attribute is overridden by a non-attribute value, it shouldn't be included in ``__attributes__`` and co.
+
+* If an attribute is overridden by a new attribute, preserve the original definition order.  This is useful, as an
+  example, to ensure the order of positional arguments don't change even if you override the default value through
+  redefinition.
+
 
 5. License
 ==========

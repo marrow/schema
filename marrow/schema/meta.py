@@ -5,12 +5,7 @@
 This handles the irregularities of metaclass definition and usage across Python versions.
 """
 
-import sys
-
-try:  # pragma: no cover
-	from collections import OrderedDict
-except ImportError:  # pragma: no cover
-	from ordereddict import OrderedDict
+from .compat import odict
 
 
 class ElementMeta(type):
@@ -22,28 +17,50 @@ class ElementMeta(type):
 		"""Gather known attributes together, preserving order, and transfer attribute names to them."""
 		
 		if len(bases) == 1 and bases[0] is object:
-			attrs['__attributes__'] = OrderedDict()
+			attrs['__attributes__'] = odict()
 			return type.__new__(meta, name, bases, attrs)
 		
-		attributes = OrderedDict()
+		attributes = odict()
+		overridden_sequence = dict()
+		fixups = []
 		
 		for base in bases:
 			if hasattr(base, '__attributes__'):
 				attributes.update(base.__attributes__)
 		
+		# To allow for hardcoding of Attributes we eliminate keys that have been redefined.
+		# They might get added back later, of course.
+		for k in attrs:
+			if k in attributes:
+				overridden_sequence[k] = attributes[k].__sequence__
+				attributes.pop(k, None)
+		
 		def process(name, attr):
 			if not getattr(attr, '__name__', None):
 				attr.__name__ = name
+			
+			if name in overridden_sequence:
+				attr.__sequence__ = overridden_sequence[name]
+			
+			# We give attributes a chance to perform additional work.
+			if hasattr(attr, '__fixup__'):
+				fixups.append(attr)  # Record the attribute to prevent __get__ transformation later.
+			
 			return name, attr
 		
-		for k, v in sorted(
-				(process(k, v) for k, v in attrs.items() if isinstance(v, Element)),
-				key = lambda t: t[1].__sequence__):
-			attributes[k] = v
+		attributes.update(process(k, v) for k, v in attrs.items() if isinstance(v, Element))
 		
-		attrs['__attributes__'] = attributes
+		attrs['__attributes__'] = odict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
 		
-		return type.__new__(meta, name, bases, attrs)
+		result = type.__new__(meta, name, bases, attrs)
+		
+		if hasattr(result, '__attributed__'):
+			result.__attributed__()
+		
+		for obj in fixups:
+			obj.__fixup__(result)
+		
+		return result
 	
 	def __call__(meta, *args, **kw):
 		"""Automatically give each new instance an atomically incrementing sequence number."""

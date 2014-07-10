@@ -1,10 +1,6 @@
 # encoding: utf-8
 
-try:  # pragma: no cover
-	from collections import OrderedDict
-except ImportError:  # pragma: no cover
-	from ordereddict import OrderedDict
-
+from .compat import odict
 from .declarative import Container, Attribute
 
 
@@ -21,7 +17,29 @@ class Attributes(Container):
 		if not self.only:
 			return obj.__attributes__.copy()
 		
-		return OrderedDict((k, v) for k, v in obj.__attributes__.items() if isinstance(v, self.only))
+		return odict((k, v) for k, v in obj.__attributes__.items() if isinstance(v, self.only))
+
+
+def ensure_tuple(length, tuples):
+	"""Yield `length`-sized tuples from the given collection.
+	
+	Will truncate longer tuples to the desired length, and pad using the leading element if shorter.
+	"""
+	for elem in tuples:
+		if not isinstance(elem, (tuple, list)):
+			yield (elem, ) * length
+			continue
+		
+		l = len(elem)
+		
+		if l == length:
+			yield elem
+		
+		elif l > length:
+			yield tuple(elem[:length])
+		
+		elif l < length:
+			yield (elem[0], ) * (length - l) + tuple(elem)
 
 
 # Deprecated naming conventions; for legacy use only.
