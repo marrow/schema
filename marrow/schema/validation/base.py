@@ -2,11 +2,7 @@
 
 from __future__ import unicode_literals
 
-import sys
-import copy
-
-from .. import Container, Attribute, Attributes
-from ..compat import unicode
+from .. import Container, Attribute
 from ..util import ensure_tuple
 from .exc import Concern
 
