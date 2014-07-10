@@ -59,7 +59,7 @@ class AlwaysTruthy(Validator):
 	"""A value must always be truthy."""
 	
 	def validate(self, value, context=None):
-		value = super(Required, self).validate(value, context)
+		value = super(AlwaysTruthy, self).validate(value, context)
 		
 		if not bool(value):
 			raise Concern("Value is missing or empty.")
@@ -108,7 +108,7 @@ class AlwaysRequired(Validator):
 	"""A value must always be provided."""
 	
 	def validate(self, value, context=None):
-		value = super(Required, self).validate(value, context)
+		value = super(AlwaysRequired, self).validate(value, context)
 		
 		if value is None:
 			raise Concern("Value is required, but none was provided.")
@@ -137,7 +137,8 @@ class AlwaysMissing(Validator):
 	def validate(self, value, context=None):
 		value = super(AlwaysMissing, self).validate(value, context)
 		
-		if value is not None or (hasattr(value, '__len__') and len(value)):
+		if value is not None and (not hasattr(value, '__len__') or len(value)):
+			print(repr(value))
 			raise Concern("Value must be omitted, but value was provided.")
 		
 		return value
@@ -165,26 +166,23 @@ class Callback(Validator):
 	
 		@Callback
 		def always(validator, value, context):
-			return True
+			return value
 		
 		assert isinstance(always, Callback)
-		assert always.validate() ==
+		assert always.validate(27) == 27
 	"""
 	validator = Attribute(default=None)
 	
 	def validate(self, value=None, context=None):
-		if super(Callback, self).validate(value, context):
-			return True
+		value = super(Callback, self).validate(value, context)
 		
 		if not self.validator:
-			return
+			return value
 		
 		result = self.validator(self, value, context)
 		
 		if isinstance(result, Concern):
 			raise result
-		elif result is not True and result:
-			raise Concern(*result)
 		
 		return result
 
@@ -200,16 +198,17 @@ class In(Validator):
 	choices = Attribute(default=None)
 	
 	def validate(self, value, context=None):
-		if super(In, self).validate(value, context):
-			return True
+		value = super(In, self).validate(value, context)
 		
 		if not self.choices:
-			return
+			return value
 		
 		choices = self.choices() if callable(self.choices) else self.choices
 		
 		if (value, ) not in ensure_tuple(1, choices):
-			raise Concern(ERROR, "Value is not in allowed list.")
+			raise Concern("Value is not in allowed list.")
+		
+		return value
 
 
 class Contains(Validator):
@@ -218,17 +217,18 @@ class Contains(Validator):
 	contains = Attribute()
 	
 	def validate(self, value, context=None):
-		if super(Contains, self).validate(value, context):
-			return True
+		value = super(Contains, self).validate(value, context)
 		
 		# Small dance to allow None as a valid comparison value.
 		try:
 			other = self.contains() if callable(self.contains) else self.contains
 		except AttributeError:
-			return
+			return value
 		
 		if other not in value:
-			raise Concern(ERROR, "Value does not contain: {0}", other)
+			raise Concern("Value does not contain: {0}", other)
+		
+		return value
 
 
 class Length(Validator):
@@ -236,67 +236,74 @@ class Length(Validator):
 	
 	The defined length may represent an integer maximum length or be a slice() instance to represent min/max/step.
 	
-	Non-empty can be defined as a Length(slice(1,None))
+	Non-empty can be defined as a Length(slice(1, None)).
+	
+	An exact lngth can be defined as Length(slice(size, size+1))
 	"""
 	
 	length = Attribute(default=None)  # TODO: Ensure this is a slice().  Tuples turn into slice(*value)
 	
 	def validate(self, value, context=None):
-		if super(LengthValidator, self).validate(value, context):
-			return True
+		value = super(Length, self).validate(value, context)
 		
 		if self.length is None:
-			return
+			return value
 		
 		ln = len(value)
 		length = self.length() if callable(self.length) else self.length
 		
-		if not isinstance(length, slice) and ln > length:
-			raise Concern(ERROR, "Value too long; must be {0} or shorter.", length)
+		if not isinstance(length, slice):
+			if ln > length:
+				raise Concern("Value too long; must be {0} or shorter.", length)
 		
-		elif ln not in range(*length.indices(ln)):
-			raise Concern(ERROR, "Length out of bounds; must be between {0} and {1} long.",
+		elif ln not in range(*length.indices(ln + 1)):
+			raise Concern("Length out of bounds; must be between {0} and {1} long.",
 					length.start, length.stop)
+		
+		return value
 
 
 class Range(Validator):
-	"""Ensure the value is within a given range."""
+	"""Ensure the value is within a given range, inclusive."""
 	
 	minimum = Attribute(default=None)
 	maximum = Attribute(default=None)
 	
 	def validate(self, value, context=None):
-		if super(Range, self).validate(value, context):
-			return True
+		value = super(Range, self).validate(value, context)
 		
 		if self.minimum is None and self.maximum is None:
-			return
+			return value
 		
-		minimum, maximum = self.minimum, self.maximum
+		minimum = self.minimum() if callable(self.minimum) else self.minimum
+		maximum = self.maximum() if callable(self.maximum) else self.maximum
 		
 		if minimum and maximum and not (minimum <= value <= maximum):
-			raise Concern(ERROR, "Out of bounds; must be greater than {0} and less than {1}.",
+			raise Concern("Out of bounds; must be greater than {0} and less than {1}.",
 					minimum, maximum)
 		
 		elif minimum and value < minimum:
-			raise Concern(ERROR, "Too small; must be greater than {0}.", minimum)
+			raise Concern("Too small; must be greater than {0}.", minimum)
 		
 		elif maximum and value > maximum:
-			raise Concern(ERROR, "Too large; must be less than {1}.", maximum)
+			raise Concern("Too large; must be less than {1}.", maximum)
+		
+		return value
 
 
 class Pattern(Validator):
 	pattern = Attribute(default=None)  # TODO: Ensure this is always a compiled regex.
 	
-	def __call__(self, value, context=None):
-		if super(Pattern, self).validate(value, context):
-			return True
+	def validate(self, value, context=None):
+		value = super(Pattern, self).validate(value, context)
 		
 		if not self.pattern:
-			return
+			return value
 		
 		if not self.pattern.match(value):
-			raise Concern(ERROR, "Failed to match required pattern.")
+			raise Concern("Failed to match required pattern.")
+		
+		return value
 
 
 class Instance(Validator):
@@ -305,11 +312,12 @@ class Instance(Validator):
 	instance = Attribute(default=None)
 	
 	def validate(self, value, context=None):
-		if super(InstanceOf, self).validate(value, context):
-			return True
+		value = super(Instance, self).validate(value, context)
 		
 		if self.instance and not isinstance(value, self.instance):
-			raise Concern(ERROR, "Value is not an instance of {0!r}.", self.instance)
+			raise Concern("Value is not an instance of {0!r}.", self.instance)
+		
+		return value
 
 
 class Subclass(Validator):
@@ -318,11 +326,12 @@ class Subclass(Validator):
 	subclass = Attribute(default=None)
 	
 	def validate(self, value, context=None):
-		if super(Subclass, self).validate(value, context):
-			return True
+		value = super(Subclass, self).validate(value, context)
 		
 		if self.subclass and not issubclass(value, self.subclass):
-			raise Concern(ERROR, "Value is not a subclass of {0!r}.", self.subclass)
+			raise Concern("Value is not a subclass of {0!r}.", self.subclass)
+		
+		return value
 
 
 class Equal(Validator):
@@ -334,17 +343,18 @@ class Equal(Validator):
 	equals = Attribute()
 	
 	def validate(self, value, context=None):
-		if super(Equals, self).validate(value, context):
-			return True
+		value = super(Equal, self).validate(value, context)
 		
 		# We perform this little dance to ensure None is a valid value.
 		try:
 			other = self.equals() if callable(self.equals) else self.equals
 		except AttributeError:
-			return
+			return value
 		
 		if value != other:
-			raise Concern(ERROR, "Value does not equal: {0}", other)
+			raise Concern("Value does not equal: {0}", other)
+		
+		return value
 
 
 class Unique(Validator):
@@ -355,10 +365,10 @@ class Unique(Validator):
 	"""
 	
 	def validate(self, value, context=None):
-		if super(Unique, self).validate(value, context):
-			return True
+		value = super(Unique, self).validate(value, context)
+		_value = value.values() if hasattr(value, 'values') else value
 		
-		value = value.values() if hasattr(value, 'values') else value
+		if not len(_value) == len(set(_value)):
+			raise Concern("Not all values are unique.")
 		
-		if not len(value) == len(set(value)):
-			raise Concern(ERROR, "Not all values are unique.")
+		return value
