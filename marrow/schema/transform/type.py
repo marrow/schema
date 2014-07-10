@@ -1,0 +1,70 @@
+# encoding: utf-8
+
+from __future__ import unicode_literals
+
+import sys
+
+from marrow.util.convert import boolean
+
+from .base import Transform, SimpleTransform, Attribute
+
+
+if sys.version_info > (3, ):
+	unicode = str
+	str = bytes
+
+
+class BooleanTransform(Transform):
+	true = Attribute(default=('yes', 'y', 'on', 'true', 't', '1'))
+	false = Attribute(default=('no', 'n', 'off', 'false', 'f', '0'))
+	
+	def __call__(self, value):
+		try:
+			return True if value.strip() else False
+		except AttributeError:
+			return True if bool(value) else False
+	
+	def native(self, value):
+		value = super(BooleanTransform, self).native(value)
+		
+		try:
+			value = value.strip().lower()
+		except AttributeError:
+			return bool(input)
+		
+		if value in self.true:
+			return True
+		
+		if value in self.false:
+			return False
+		
+		raise ValueError("Unable to convert {0!r} to a boolean value.".format(value))
+
+boolean = BooleanTransform()
+
+
+class BooleanWebTransform(BooleanTransform):
+	"""Some web frameworks and widget systems handle checkboxes by having a hidden form field and a checkbox.
+	
+	If the checkbox is unchecked, you get the "default" value as the only value.  If the checkbox is checked, you end
+	up with two values, one for the hidden field (False) and one for the checkbox (True); in this situation we only
+	take the last value defined.
+	"""
+	
+	def native(self, value):
+		return super(BooleanWebTransform, self).native(value[0] if isinstance(value, (list, tuple)) else value)
+
+
+class IntegerTransform(SimpleTransform):
+	type = int
+
+
+class FloatTransform(SimpleTransform):
+	type = float
+
+
+class NumberTransform(ChainTransform):
+	integer = IntegerTransform()
+	floating = FloatTransform()
+
+number = NumberTransform()
