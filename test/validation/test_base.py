@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import re
 
+from marrow.schema.compat import unicode
 from marrow.schema.validation.base import *
 
 
