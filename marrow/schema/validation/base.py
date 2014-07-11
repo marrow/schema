@@ -245,16 +245,21 @@ class Length(Validator):
 		if self.length is None:
 			return value
 		
-		ln = len(value)
+		ln = len(value) if hasattr(value, '__len__') else None
 		length = self.length() if callable(self.length) else self.length
 		
 		if not isinstance(length, slice):
+			if ln is None:
+				raise Concern("Value can't be measured; must be {0} or shorter.", length)
+			
 			if ln > length:
 				raise Concern("Value too long; must be {0} or shorter.", length)
 		
+		elif ln is None:
+			raise Concern("Value can't be measured; must be between {0} and {1} long.", length.start, length.stop)
+		
 		elif ln not in range(*length.indices(ln + 1)):
-			raise Concern("Length out of bounds; must be between {0} and {1} long.",
-					length.start, length.stop)
+			raise Concern("Length out of bounds; must be between {0} and {1} long.", length.start, length.stop)
 		
 		return value
 

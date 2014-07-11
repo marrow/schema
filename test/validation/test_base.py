@@ -169,6 +169,7 @@ class TestLength(object):
 	
 	def test_simple(self):
 		self._do(self.simple, " " * 5, " " * 25)
+		self._do(self.simple, ('', ) * 5, None)
 	
 	def test_callback(self):
 		self._do(self.callback, " " * 5, " " * 15)
@@ -177,6 +178,7 @@ class TestLength(object):
 		self._do(self.rangeish, " " * 7, " " * 8)
 		self._do(self.rangeish, " " * 11, " " * 4)
 		self._do(self.rangeish, " " * 11, " " * 27)
+		self._do(self.rangeish, ('', ) * 5, None)
 	
 	def test_exact(self):
 		self._do(self.exact, " " * 32, " " * 31)

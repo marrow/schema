@@ -29,40 +29,52 @@ class Compound(Validator):
 			yield validator
 		
 		if self.validators:
-			for validator in validators:
+			for validator in self.validators:
 				yield validator
-	
-	def validate(self, value, context=None):
-		if super(Compound, self).validate(value, context):
-			return True
-		
-		# Exit early if there aren't any...
-		if not self.validators and not self.__validators__:
-			return True
 
 
 class Any(Compound):
 	"""Evaluate multiple validators, stopping on the first success."""
 	
 	def validate(self, value, context=None):
-		if super(Any, self).validate(value, context):
-			return True
+		value = super(Any, self).validate(value, context)
+		failures = []
 		
 		for validator in self._validators:
 			try:
 				return validator.validate(value, context)
 			except Concern as e:
-				pass  # TODO: Gather the multiple failures... then re-raise them later.
-		else:
-			raise Concern(ERROR, "All validators failed.")
+				failures.append(e)
+		
+		raise Concern("All validators failed.", concerns=failures)
 
 
 class All(Compound):
 	"""Evaluate multiple validators, requiring all to pass.  Stops on the first failure."""
 	
 	def validate(self, value, context=None):
-		if super(All, self).validate(value, context):
-			return True
+		value = super(All, self).validate(value, context)
 		
 		for validator in self._validators:
-			validator.validate(value, context)
+			value = validator.validate(value, context)
+		
+		return value
+
+
+class Pipe(Compound):
+	"""Evaluate multiple validators, requiring all to pass.  Will always evaluate all validators."""
+	
+	def validate(self, value, context=None):
+		value = super(Pipe, self).validate(value, context)
+		failures = []
+		
+		for validator in self._validators:
+			try:
+				value = validator.validate(value, context)
+			except Concern as e:
+				failures.append(e)
+		
+		if failures:
+			raise Concern("One or more validators failed.", concerns=failures)
+		
+		return value
