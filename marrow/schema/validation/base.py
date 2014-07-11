@@ -2,10 +2,56 @@
 
 from __future__ import unicode_literals
 
-from .. import Container, Attribute
+from re import compile
+from numbers import Number
+
+from .. import Container, Attribute, CallbackAttribute
 from ..util import ensure_tuple
 from .exc import Concern
 
+
+# Internal helper attribute subclasses.
+
+class _SliceAttribute(CallbackAttribute):
+	"""Automatically consume iterables to ensure the assigned value is always a slice() instance."""
+	
+	@staticmethod
+	def __cast(value):
+		if isinstance(value, Number):
+			value = (value, )
+		
+		if not isinstance(value, slice):
+			value = slice(*value)
+		
+		return value
+	
+	def __wrap(self, fn):
+		def inner():
+			return self.__cast(fn())
+		
+		return inner
+	
+	def __set__(self, obj, value):
+		if callable(value):
+			return super(_SliceAttribute, self).__set__(obj, self.__wrap(value))
+		
+		return super(_SliceAttribute, self).__set__(obj, self.__cast(value))
+
+
+class _RegexAttribute(CallbackAttribute):
+	"""Automatically attempt to transform non-regexen into regexen upon assignment.
+	
+	Technically only checks for regex-like capability a la a `.match()` method.
+	"""
+
+	def __set__(self, obj, value):
+		if not hasattr(value, 'match'):
+			value = compile(value)
+		
+		return super(_RegexAttribute, self).__set__(obj, value)
+
+
+# Public API.
 
 class Validator(Container):
 	"""Validate a value against one or more rules.
@@ -191,15 +237,15 @@ class In(Validator):
 	The iterable may be either a collection of single values, or a collection of 2-tuples indicating value and label.
 	"""
 	
-	choices = Attribute(default=None)
+	choices = CallbackAttribute(default=None)
 	
 	def validate(self, value, context=None):
 		value = super(In, self).validate(value, context)
 		
-		if not self.choices:
-			return value
+		choices = self.choices
 		
-		choices = self.choices() if callable(self.choices) else self.choices
+		if not choices:
+			return value
 		
 		if (value, ) not in ensure_tuple(1, choices):
 			raise Concern("Value is not in allowed list.")
@@ -210,14 +256,14 @@ class In(Validator):
 class Contains(Validator):
 	"""Value being validated must contain the given value."""
 	
-	contains = Attribute()
+	contains = CallbackAttribute()
 	
 	def validate(self, value, context=None):
 		value = super(Contains, self).validate(value, context)
 		
 		# Small dance to allow None as a valid comparison value.
 		try:
-			other = self.contains() if callable(self.contains) else self.contains
+			other = self.contains
 		except AttributeError:
 			return value
 		
@@ -237,7 +283,7 @@ class Length(Validator):
 	An exact lngth can be defined as Length(slice(size, size+1))
 	"""
 	
-	length = Attribute(default=None)  # TODO: Ensure this is a slice().  Tuples turn into slice(*value)
+	length = _SliceAttribute(default=None)
 	
 	def validate(self, value, context=None):
 		value = super(Length, self).validate(value, context)
@@ -246,16 +292,9 @@ class Length(Validator):
 			return value
 		
 		ln = len(value) if hasattr(value, '__len__') else None
-		length = self.length() if callable(self.length) else self.length
+		length = self.length
 		
-		if not isinstance(length, slice):
-			if ln is None:
-				raise Concern("Value can't be measured; must be {0} or shorter.", length)
-			
-			if ln > length:
-				raise Concern("Value too long; must be {0} or shorter.", length)
-		
-		elif ln is None:
+		if ln is None:
 			raise Concern("Value can't be measured; must be between {0} and {1} long.", length.start, length.stop)
 		
 		elif ln not in range(*length.indices(ln + 1)):
@@ -267,8 +306,8 @@ class Length(Validator):
 class Range(Validator):
 	"""Ensure the value is within a given range, inclusive."""
 	
-	minimum = Attribute(default=None)
-	maximum = Attribute(default=None)
+	minimum = CallbackAttribute(default=None)
+	maximum = CallbackAttribute(default=None)
 	
 	def validate(self, value, context=None):
 		value = super(Range, self).validate(value, context)
@@ -276,8 +315,8 @@ class Range(Validator):
 		if self.minimum is None and self.maximum is None:
 			return value
 		
-		minimum = self.minimum() if callable(self.minimum) else self.minimum
-		maximum = self.maximum() if callable(self.maximum) else self.maximum
+		minimum = self.minimum
+		maximum = self.maximum
 		
 		if minimum and maximum and not (minimum <= value <= maximum):
 			raise Concern("Out of bounds; must be greater than {0} and less than {1}.",
@@ -293,7 +332,7 @@ class Range(Validator):
 
 
 class Pattern(Validator):
-	pattern = Attribute(default=None)  # TODO: Ensure this is always a compiled regex.
+	pattern = _RegexAttribute(default=None)
 	
 	def validate(self, value, context=None):
 		value = super(Pattern, self).validate(value, context)
@@ -341,14 +380,14 @@ class Equal(Validator):
 	The value to compare against may be a callback taking no arguments and returning the value for comparison.
 	"""
 	
-	equals = Attribute()
+	equals = CallbackAttribute()
 	
 	def validate(self, value, context=None):
 		value = super(Equal, self).validate(value, context)
 		
 		# We perform this little dance to ensure None is a valid value.
 		try:
-			other = self.equals() if callable(self.equals) else self.equals
+			other = self.equals
 		except AttributeError:
 			return value
 		
