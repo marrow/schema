@@ -124,6 +124,8 @@ class Attribute(DataAttribute):
 			name = self.__name__
 		
 		obj.__data__[name] = value
+		
+		return name
 	
 	def __delete__(self, obj):
 		try:
@@ -132,6 +134,21 @@ class Attribute(DataAttribute):
 			name = self.__name__
 		
 		del obj.__data__[name]
+
+
+class CallbackAttribute(Attribute):
+	"""An attribute that automatically executes the value upon retrieval, if callable.
+	
+	Frequently used by validation, transformation, and object mapper systems.
+	"""
+	
+	def __get__(self, obj, cls=None):
+		if obj is None:
+			return self
+		
+		value = super(CallbackAttribute, self).__get__(obj, cls)
+		
+		return value() if callable(value) else value
 
 
 # Deprecated naming conventions; for legacy use only.
