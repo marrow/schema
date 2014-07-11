@@ -2,7 +2,7 @@
 
 import pytest
 
-from marrow.schema.declarative import Container, DataAttribute, Attribute
+from marrow.schema.declarative import Container, DataAttribute, Attribute, CallbackAttribute
 
 
 class TestContainer:
@@ -127,3 +127,11 @@ class TestAttribute:
 	def test_othername(self):
 		instance = self.Sample(baz="Hello, world!")
 		assert instance.__data__ == dict(bazzy="Hello, world!")
+
+
+class TestCallbackAttribute:
+	class Sample(Container):
+		cb = CallbackAttribute()
+	
+	def test_selfretrieval(self):
+		assert self.Sample.cb is self.Sample.__dict__['cb']
