@@ -15,7 +15,7 @@ Marrow Schema
 1. What is Marrow Schema?
 =========================
 
-Marrow Schema is a tiny and fully tested, Python 2.7 and 3.2+ compatible declarative syntax toolkit.  This basically
+Marrow Schema is a tiny and fully tested, Python 2.6+ and 3.2+ compatible declarative syntax toolkit.  This basically
 means you use high-level objects to define other high-level object data structures.  Simplified: you'll never have
 to write a class constructor that only assigns instance variables again.
 
@@ -25,11 +25,15 @@ Examples of use include:
 
 * The object mapper aspect of an ORM or ODM for database access.
 
+* Declarative schema-driven serialization systems.
+
 * `Marrow Interface <https://github.com/marrow/marrow.interface>`_, declarative schema validation for arbitrary Python
   objects similar in purpose to ``zope.interface`` or Python's own abstract base classes.
 
 * `Marrow Widgets <https://github.com/marrow/marrow.widgets>`_ are defined declaratively allowing for far more flexible
   and cooperative subclassing.
+
+* Powerful data validation and transformation using the included frameworks.
 
 
 1.1 Goals
