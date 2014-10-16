@@ -6,19 +6,50 @@ import sys
 import uuid
 import logging
 
+from collections import Sequence
+from numbers import Number
+
 from .. import Attribute
-from .base import Concern, Validator, CompoundValidator
+from ..compat import unicode, str
+from .base import Concern, Validator
+from .compound import Compound, Any, All
 
 
-if sys.version_info > (3, ):
-	unicode = str
-	str = bytes
 
 
-class IteratorValidator(CompoundValidator):
-	def __call__(self, value):
-		for item in value:
-			super(IteratorValidator, self).__call__(item)
+class Iterable(Compound):
+	"""The sub-elements of the given iterable value must conform to certain criteria."""
+	
+	require = Attribute(default=All)
+	
+	def validate(self, value, context=None):
+		if not isinstance(value, Sequence):
+			raise Concern("Value must be a sequence of items.")
+		
+		if hasattr(value, 'iteritems'):
+			value = value.iteritems()
+		elif hasattr(value, 'items'):
+			value = value.items()
+		else:
+			value = enumerate(value)
+		
+		validate = self.require(validators=self._validators).validate
+		concerns = []
+		
+		for i, item in value:
+			try:
+				validate(item, context)
+			except Concern as e:
+				e.message = "Element {0!r}: ".format(i)
+				concerns.append(e)
+		
+		if concerns:
+			if len(concerns) == 1:
+				raise concerns[0]
+			
+			raise Concern(max(i.level for i in concerns), "Multiple validation failures.", concerns=concerns)
+		
+		return value
 
 
 
@@ -28,7 +59,8 @@ class StringKeys(Validator):
 	"""Ensure the keys of the given mapping are all strings."""
 
 	def validate(self, value, context=None):
-		if super(StringKeys, self).validate(value, context)
+		if super(StringKeys, self).validate(value, context):
+			pass
 
 		def inner(d):
 			for k, v in d.items():

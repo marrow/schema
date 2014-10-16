@@ -8,50 +8,8 @@ from numbers import Number
 from .. import Container, Attribute, CallbackAttribute
 from ..util import ensure_tuple
 from .exc import Concern
+from .util import SliceAttribute, RegexAttribute
 
-
-# Internal helper attribute subclasses.
-
-class _SliceAttribute(CallbackAttribute):
-	"""Automatically consume iterables to ensure the assigned value is always a slice() instance."""
-	
-	@staticmethod
-	def __cast(value):
-		if isinstance(value, Number):
-			value = (value, )
-		
-		if not isinstance(value, slice):
-			value = slice(*value)
-		
-		return value
-	
-	def __wrap(self, fn):
-		def inner():
-			return self.__cast(fn())
-		
-		return inner
-	
-	def __set__(self, obj, value):
-		if callable(value):
-			return super(_SliceAttribute, self).__set__(obj, self.__wrap(value))
-		
-		return super(_SliceAttribute, self).__set__(obj, self.__cast(value))
-
-
-class _RegexAttribute(CallbackAttribute):
-	"""Automatically attempt to transform non-regexen into regexen upon assignment.
-	
-	Technically only checks for regex-like capability a la a `.match()` method.
-	"""
-
-	def __set__(self, obj, value):
-		if not hasattr(value, 'match'):
-			value = compile(value)
-		
-		return super(_RegexAttribute, self).__set__(obj, value)
-
-
-# Public API.
 
 class Validator(Container):
 	"""Validate a value against one or more rules.
@@ -123,7 +81,7 @@ class Truthy(AlwaysTruthy):
 
 
 class AlwaysFalsy(Validator):
-	"""A value must always be truthy."""
+	"""A value must always be falsy."""
 	
 	def validate(self, value, context=None):
 		value = super(AlwaysFalsy, self).validate(value, context)
@@ -180,7 +138,6 @@ class AlwaysMissing(Validator):
 		value = super(AlwaysMissing, self).validate(value, context)
 		
 		if value is not None and (not hasattr(value, '__len__') or len(value)):
-			print(repr(value))
 			raise Concern("Value must be omitted, but value was provided.")
 		
 		return value
@@ -201,8 +158,9 @@ class Missing(AlwaysMissing):
 class Callback(Validator):
 	"""Execute a simple callback to validate the value.
 	
-	The callback is called with the validator instance, value, and context.  May return True, a 2-tuple of
-	`(level, message)` to signal failure, or any other value which is then ignored.
+	The callback is called with the validator instance, value, and context.
+	
+	May simply return a Concern instance.
 	
 	For your daily dose of WTF-magic, you can use this validator as a decorator::
 	
@@ -283,7 +241,7 @@ class Length(Validator):
 	An exact lngth can be defined as Length(slice(size, size+1))
 	"""
 	
-	length = _SliceAttribute(default=None)
+	length = SliceAttribute(default=None)
 	
 	def validate(self, value, context=None):
 		value = super(Length, self).validate(value, context)
@@ -332,12 +290,14 @@ class Range(Validator):
 
 
 class Pattern(Validator):
-	pattern = _RegexAttribute(default=None)
+	"""Match a regular expression."""
+	
+	pattern = RegexAttribute(default=None)
 	
 	def validate(self, value, context=None):
 		value = super(Pattern, self).validate(value, context)
 		
-		if not self.pattern:
+		if not self.pattern or value is None:
 			return value
 		
 		if not self.pattern.match(value):

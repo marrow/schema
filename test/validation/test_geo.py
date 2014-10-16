@@ -1,50 +1,32 @@
 # encoding: utf-8
 
-from marrow.schema.validation.geo import *
+from marrow.schema.validation.testing import ValidationTest
+from marrow.schema.validation.geo import latitude, longitude, position
 
 
-good = [
-		(50.010487, -110.114964),  # Clay Face
-		(45.123767, -123.113802),  # Firefox Crop Circle
-		(27.980070, 86.921377),  # Everest
-		(-17.924373, 25.855776)  # Victoria Falls
-	]
-
-bad = [
-		(-92, 219),
-		(103, -540)
-	]
+class TestGeographicLatitude(ValidationTest):
+	validator = latitude.validate
+	valid = (45, -45, 90, -90, 0)
+	invalid = (110, 360, 420, -960)
 
 
-
-def _raises(validator, value):
-	try:
-		validator.validate(value)
-	except Concern:
-		pass
-	else:
-		assert False, "Failed to raise a Concern."
+class TestGeographicLongitude(ValidationTest):
+	validator = longitude.validate
+	valid = TestGeographicLatitude.valid + (110, -110, -180, 180)
+	invalid = TestGeographicLatitude.invalid[1:]
 
 
-def test_latitude():
-	for l, _ in good:
-		assert latitude.validate(l) == l
+class TestGeographicPosition(ValidationTest):
+	validator = position.validate
 	
-	for l, _ in bad:
-		_raises(latitude, l)
-
-
-def test_longitude():
-	for _, l in good:
-		assert longitude.validate(l) == l
+	valid = (
+			(50.010487, -110.114964),  # Clay Face
+			(45.123767, -123.113802),  # Firefox Crop Circle
+			(27.980070, 86.921377),  # Everest
+			(-17.924373, 25.855776)  # Victoria Falls
+		)
 	
-	for _, l in bad:
-		_raises(longitude, l)
-
-
-def test_position():
-	for p in good:
-		assert position.validate(p) == p
-	
-	for p in bad:
-		_raises(position, p)
+	invalid = (
+			(-92, 219),
+			(103, -540)
+		)

@@ -1,43 +1,13 @@
 # encoding: utf-8
 
-from marrow.schema.validation.exc import Concern
-from marrow.schema.validation.network import *
+from marrow.schema.validation.testing import ValidationTest
+from marrow.schema.validation.network import ipv4, ipv6, ipaddress, cidrv4, cidrv6, cidr, hostname, dnsname, mac, uri
 
 
-class BaseTest(object):
-	validator = None
+class TestIPv4(ValidationTest):
+	validator = ipv4.validate
 	
-	good = [
-		]
-	
-	bad = [
-			'254.254.254.254'
-		]
-	
-	def test_good(self):
-		for value in self.good:
-			yield self._do_success, value
-	
-	def test_bad(self):
-		for value in self.bad:
-			yield self._do_failure, value
-
-	def _do_success(self, value):
-		assert self.validator.validate(value) == value
-	
-	def _do_failure(self, value):
-		try:
-			self.validator.validate(value)
-		except Concern:
-			pass
-		else:
-			assert False, "Failed to raise a Concern: " + repr(value)
-
-
-class TestIPv4(BaseTest):
-	validator = ipv4
-	
-	good = [
+	valid = (
 			'1.1.1.1',
 			'255.255.255.255',
 			'192.168.1.1',
@@ -45,9 +15,9 @@ class TestIPv4(BaseTest):
 			'132.254.111.10',
 			'26.10.2.10',
 			'127.0.0.1'
-		]
+		)
 	
-	bad = [
+	invalid = (
 			'10.10.10',
 			'10.10',
 			'10',
@@ -58,13 +28,13 @@ class TestIPv4(BaseTest):
 			'999.10.10.20',
 			'2222.22.22.22',
 			'22.2222.22.2'
-		]
+		)
 
 
-class TestIPv6(BaseTest):
-	validator = ipv6
+class TestIPv6(ValidationTest):
+	validator = ipv6.validate
 	
-	good = [
+	valid = (
 			'2000::',  # Incomplete address, technically valid.
 			'2002:c0a8:101::42',  # Invalid range, technically valid.
 			'2003:dead:beef:4dad:23:46:bb:101',
@@ -77,56 +47,42 @@ class TestIPv6(BaseTest):
 			'2608::3:5',  # Compact form.
 			'ff02::1:2',  # Multicast.
 			'2001:4860:4001:803::1011',  # Google.
-		]
+		)
 	
-	bad = [
-		]
+	invalid = (
+			'wxyz:',  # Not even close.
+			# '2003:dead:beef:cafe:babe:8bad:f00d:b0da:face:d00d',  # Too long, doesn't fail?
+		)
 
 
-class TestIPAddress(BaseTest):
-	validator = ipaddress
-	good = TestIPv4.good + TestIPv6.good
-	bad = TestIPv4.bad + TestIPv6.bad
+class TestIPAddress(ValidationTest):
+	validator = ipaddress.validate
+	valid = TestIPv4.valid + TestIPv6.valid
+	invalid = TestIPv4.invalid + TestIPv6.invalid
 
 
-class TestCIDRv4(BaseTest):
-	validator = cidrv4
+class TestCIDRv4(ValidationTest):
+	validator = cidrv4.validate
+	valid = ('10.0.0.0/8', '172.16.0.0/12', '196.168.0.0/16', '192.168.1.100/24')
+	invalid = ('10/8', '8.8.8.8/33')
+
+
+class TestCIDRv6(ValidationTest):
+	validator = cidrv6.validate
+	valid = ('2620:0:2d0:2da:0:0:0:0/63', 'abcd:ef01::/64')
+	invalid = ('dead:face::/129', )
+
+
+class TestCIDR(ValidationTest):
+	validator = cidr.validate
+	valid = TestCIDRv4.valid + TestCIDRv6.valid
+	invalid = TestCIDRv4.invalid + TestCIDRv6.invalid
+
+
+class TestHostname(ValidationTest):
+	validator = hostname.validate
 	
-	good = [
-			'10.0.0.0/8',
-			'172.16.0.0/12',
-			'196.168.0.0/16',
-			'192.168.1.100/24',
-		]
-	
-	bad = [
-			'10/8',
-			'8.8.8.8/33'
-		]
-
-
-class TestCIDRv6(BaseTest):
-	validator = cidrv6
-	
-	good = [
-			'2620:0:2d0:2da:0:0:0:0/63',
-			'abcd:ef01::/64',
-		]
-	
-	bad = [
-		]
-
-
-class TestCIDR(BaseTest):
-	validator = cidr
-	good = TestCIDRv4.good + TestCIDRv6.good
-	bad = TestCIDRv4.bad + TestCIDRv6.bad
-
-
-class TestHostname(BaseTest):
-	validator = hostname
-	
-	good = [
+	valid = (
 			'google.com',
 			'itsnotmygoddamnplanetunderstandmonkeyboy.wpi.edu',
 			'a' * 63 + '.' + 'b' * 63,
@@ -145,9 +101,9 @@ class TestHostname(BaseTest):
 			'abc.mkyong-info.com',
 			'abc-123.mkyong-99b.com.my',
 			'mkyong',
-		]
+		)
 	
-	bad = [
+	invalid = (
 			'a' * 64 + '.' + 'b' * 63,
 			'123,345.com',
 			'.com.my',
@@ -156,43 +112,26 @@ class TestHostname(BaseTest):
 			'youtube.com/users/abc',
 			'google.t.t.t',
 			'mkyong.com.abcdefg123',
-		]
+		)
 
 
-class TestDNSName(BaseTest):
-	validator = dnsname
-	
-	good = TestHostname.good + [
-			'tenthdimension.wpi.edu.',
-		]
-	
-	bad = TestHostname.bad + [
-		]
+class TestDNSName(ValidationTest):
+	validator = dnsname.validate
+	valid = TestHostname.valid + ('tenthdimension.wpi.edu.', )
+	invalid = TestHostname.invalid + ()
 
 
-class TestMACs(BaseTest):
-	validator = mac
-	
-	good = [
-			'3D:F2:C9:A6:B3:4F',
-			'3d:f2:c9:a6:b3:4f',
-			'3D-F2-C9-A6-B3-4F',
-		]
-	
-	bad = [
-			'3D:F2:AC9:A6:B3:4F',
-			'3D:F2:C9:A6:B3:4F:00',
-			':F2:C9:A6:B3:4F',
-			'F2:C9:A6:B3:4F',
-			'3D-F2:C9-A6:B3-4F',
-		]
+class TestMACs(ValidationTest):
+	validator = mac.validate
+	valid = ('3D:F2:C9:A6:B3:4F', '3d:f2:c9:a6:b3:4f', '3D-F2-C9-A6-B3-4F')
+	invalid = ('3D:F2:AC9:A6:B3:4F', '3D:F2:C9:A6:B3:4F:00', ':F2:C9:A6:B3:4F', 'F2:C9:A6:B3:4F', '3D-F2:C9-A6:B3-4F')
 
 
-class TestURLs(BaseTest):
-	validator = uri
+class TestURLs(ValidationTest):
+	validator = uri.validate
 	
 	# These URLs borrowed from http://mathiasbynens.be/demo/url-regex
-	good = [
+	valid = (
 			'http://foo.com/blah_blah',
 			'http://foo.com/blah_blah/',
 			'http://foo.com/blah_blah_(wikipedia)',
@@ -242,10 +181,9 @@ class TestURLs(BaseTest):
 			'''sup://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+''',
 			'http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]/',
 			'undefined://www.pumps.com:9000/',
-		]
+		)
 	
-	bad = [
-		]
+	invalid = ()
 	
 
 """

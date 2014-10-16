@@ -5,83 +5,74 @@ from __future__ import unicode_literals
 import re
 
 from marrow.schema.compat import unicode
+from marrow.schema.validation.testing import ValidationTest
 from marrow.schema.validation.base import *
 
 
-class TestConstants(object):
-	always = Always()
-	never = Never()
-	
-	def test_always(self):
-		assert self.always.validate(None) is None
-	
-	def test_never(self):
-		try:
-			self.never.validate(True)
-		except Concern as e:
-			assert unicode(e) == "Set to always fail."
+# ......................................
+# .................................................
+# ............................................................
+# ................................................................................................
+# .............................................................................................................................
+# ..............................................................................................................................................................
+#
 
 
-class TestTruthyPresence(object):
-	truthes = (True, 'Foo', 1, [None], (None, ), set("abc"))
-	falsehoods = (False, '', 0, [], tuple(), set())
-	assigned = (True, False, 0, 1, 'abc')
-	empty = (None, [], '')
-	
-	truthy = Truthy(True)
-	falsy = Falsy(True)
-	required = Required(True)
-	missing = Missing(True)
-	
-	def _do(self, validator, positive, negative):
-		for value in positive:
-			assert validator.validate(value) == value
-		
-		for value in negative:
-			try:
-				validator.validate(value)
-			except Concern:
-				pass
-			else:
-				assert False, "Failed to raise a Concern."
-	
-	def test_true_values(self):
-		self._do(self.truthy, self.truthes, self.falsehoods)
-	
-	def test_false_values(self):
-		self._do(self.falsy, self.falsehoods, self.truthes)
-	
-	def test_required_values(self):
-		self._do(self.required, self.assigned, self.empty)
-	
-	def test_missing_values(self):
-		self._do(self.missing, self.empty, self.assigned)
+class TestAlways(ValidationTest):
+	validator = Always().validate
+	valid = (None, False, True, 0, 1, 3.14, '', 'foo', [], ['bar'], {}, {'baz': 'diz'})
+
+
+class TestNever(ValidationTest):
+	validator = Never().validate
+	invalid = TestAlways.valid
+
+
+class TestTruthy(ValidationTest):
+	validator = Truthy(True).validate
+	valid = (True, 'Foo', 1, [None], (None, ), set("abc"))
+	invalid = (False, '', 0, [], tuple(), set())
+
+
+class TestFalsy(ValidationTest):
+	validator = Falsy(True).validate
+	valid = TestTruthy.invalid
+	invalid = TestTruthy.valid
+
+
+class TestRequired(ValidationTest):
+	validator = Required(True).validate
+	valid = (True, False, 0, 1, 'abc')
+	invalid = (None, [], '')
+
+
+class TestMissing(ValidationTest):
+	validator = Missing(True).validate
+	valid = TestRequired.invalid
+	invalid = TestRequired.valid
+
+
+class TestEmptyCallback(ValidationTest):
+	validator = Callback().validate
+	valid = TestTruthy.valid + TestTruthy.invalid
+
+
+class TestSuccessCallback(ValidationTest):
+	validator = Callback(lambda V, v, x: v).validate
+	valid = TestEmptyCallback.valid
+
+
+class TestFailureCallback(ValidationTest):
+	validator = Callback(lambda V, v, x: Concern("Uh, no.")).validate
+	invalid = TestSuccessCallback.valid
 
 
 class TestCallbacks(object):
-	empty = Callback()
-	success = Callback(lambda V, v, x: v)
-	failure = Callback(lambda V, v, x: Concern("Uh, no."))
-	
 	@Callback  # Yes, you really can use it this way.  Implies staticmethod.
 	def raises(validator, value, context):
 		raise Concern("Oh my no.")
 	
 	assert isinstance(raises, Callback)  # Let's make sure that worked...
-	
-	def test_empty(self):
-		assert self.empty.validate(27) == 27
-	
-	def test_success(self):
-		assert self.success.validate(None) is None
-	
-	def test_failure(self):
-		try:
-			self.failure.validate(None)
-		except Concern as e:
-			assert unicode(e) == "Uh, no."
-		else:
-			assert False, "Failed to raise a Concern."
 	
 	def test_raises(self):
 		try:
@@ -92,33 +83,27 @@ class TestCallbacks(object):
 			assert False, "Failed to raise a Concern."
 
 
-class TestIn(object):
-	empty = In()
-	simple = In([1, 2, 3])
-	descriptive = In([(1, "First"), (2, "Second"), (3, "Third")])
-	callback = In(lambda: [1, 2, 3])
-	
-	def _do(self, validator):
-		assert validator.validate(1) == 1
-		
-		try:
-			validator.validate(4)
-		except Concern as e:
-			assert unicode(e) == "Value is not in allowed list."
-		else:
-			assert False, "Failed to raise a Concern."
-	
-	def test_empty(self):
-		assert self.empty.validate(4) == 4
-	
-	def test_simple(self):
-		self._do(self.simple)
-	
-	def test_descriptive(self):
-		self._do(self.descriptive)
-	
-	def test_callback(self):
-		self._do(self.callback)
+class TestInAny(ValidationTest):
+	validator = In().validate
+	valid = TestAlways.valid
+
+
+class TestInSimple(ValidationTest):
+	validator = In([1, 2, 3]).validate
+	valid = (1, 2, 3)
+	invalid = (None, 0, 4, 'bob')
+
+
+class TestInDescriptive(ValidationTest):
+	validator = In([(1, "First"), (2, "Second"), (3, "Third")]).validate
+	valid = TestInSimple.valid
+	invalid = TestInSimple.invalid
+
+
+class TestInCallback(ValidationTest):
+	validator = In(lambda: [1, 2, 3]).validate
+	valid = TestInSimple.valid
+	invalid = TestInSimple.invalid
 
 
 class TestContains(object):
