@@ -59,5 +59,4 @@ class TestIterableConcerns(object):
 			Iterable([truthy]).validate([0, False])
 		except Concern as e:
 			assert "multiple" in e.message.lower(), "Should indicate multiple failures."
-			print(e.concerns)
 			assert "Element 1" in e.concerns[1].message, "Should identify element failing validation."
