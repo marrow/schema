@@ -12,10 +12,10 @@ from marrow.schema.validation.container import *
 
 INVALID = (None, 1, True)
 EMPTY = (tuple(), list(), dict(), "")
-STRINGS = (('a', 'b'), ['a', 'b'], {'a': "one", 'b': "two"}, {'a', 'b'}, "foo")
-INTEGERS = ((0, 1, 2), [0, 1, 2], {0: 0, 1: 1, 2: 2}, {0, 1, 2})
-TRUTHY = ((1, True, 'foo'), [1, True, 'foo'], {'a': 1, 'b': True, 1: 'foo'}, {1, True, 'foo'})
-FALSY = ((0, False, ''), [0, False, ''], {None: 0, '': False, 0: ''}, {0, False, ''})
+STRINGS = (('a', 'b'), ['a', 'b'], {'a': "one", 'b': "two"}, set(['a', 'b']), "foo")
+INTEGERS = ((0, 1, 2), [0, 1, 2], {0: 0, 1: 1, 2: 2}, set([0, 1, 2]))
+TRUTHY = ((1, True, 'foo'), [1, True, 'foo'], {'a': 1, 'b': True, 1: 'foo'}, set([1, True, 'foo']))
+FALSY = ((0, False, ''), [0, False, ''], {None: 0, '': False, 0: ''}, set([0, False, '']))
 
 
 class TestIterable(ValidationTest):
