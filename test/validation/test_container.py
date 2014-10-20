@@ -17,6 +17,7 @@ STRINGS = (('a', 'b'), ['a', 'b'], {'a': "one", 'b': "two"}, set(['a', 'b']), "f
 INTEGERS = ((0, 1, 2), [0, 1, 2], {0: 0, 1: 1, 2: 2}, set([0, 1, 2]))
 TRUTHY = ((1, True, 'foo'), [1, True, 'foo'], {'a': 1, 'b': True, 1: 'foo'}, set([1, True, 'foo']))
 FALSY = ((0, False, ''), [0, False, ''], {None: 0, '': False, 0: ''}, set([0, False, '']))
+NONMAP = (tuple(), list(), "")
 
 
 class TestIterable(ValidationTest):
@@ -60,3 +61,25 @@ class TestIterableConcerns(object):
 		except Concern as e:
 			assert "multiple" in e.message.lower(), "Should indicate multiple failures."
 			assert "Element 1" in e.concerns[1].message, "Should identify element failing validation."
+
+
+class TestMapping(ValidationTest):
+	validator = Mapping([Instance(unicode)]).validate
+	valid = ({}, {1: 'foo', 2: 'bar'})
+	invalid = INVALID + NONMAP + ({1: 2, 2: 'baz'}, )
+
+
+class TestMappingConcerns(object):
+	def test_singular_failure(self):
+		try:
+			Mapping([truthy]).validate({'bob': True, 'dole': False})
+		except Concern as e:
+			assert "dole" in e.message, "Should identify element failing validation."
+			assert not e.concerns, "Should not contain child concerns."
+	
+	def test_multiple_failure(self):
+		try:
+			Mapping([truthy]).validate({'bob': False, 'dole': False})
+		except Concern as e:
+			assert "multiple" in e.message.lower(), "Should indicate multiple failures."
+			assert "dole" in e.concerns[0].message or "dole" in e.concerns[1].message, "Should identify element failing validation."
