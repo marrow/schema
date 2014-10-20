@@ -361,7 +361,7 @@ class Unique(Validator):
 	"""Ensure the values of an iterable are unique.
 	
 	Works on built-in iterables such as lists, tuples, sets, etc. and even dictionaries, though it only checks
-	dictionary values as the keys are already gaurenteed to be unique.
+	dictionary values as the keys are already gaurenteed to be unique.  Must be able to transform into a set.
 	"""
 	
 	def validate(self, value, context=None):
@@ -372,3 +372,12 @@ class Unique(Validator):
 			raise Concern("Not all values are unique.")
 		
 		return value
+
+
+class ValidatedAttribute(CallbackAttribute):
+	"""A small attribute helper to validate values as they are assigned.
+	
+	Can be used as a mixin, i.e. to provide typecasting in addition to validation.
+	"""
+	
+	validator = CallbackAttribute(default=always)
