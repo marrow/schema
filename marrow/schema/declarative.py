@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+from warnings import warn
 from inspect import isroutine
 from .meta import Element
 
@@ -154,5 +155,12 @@ class CallbackAttribute(Attribute):
 
 # Deprecated naming conventions; for legacy use only.
 
-BaseAttribute = Container
-BaseDataAttribute = DataAttribute
+class BaseAttribute(Container):
+	def __init__(self, *args, **kw):
+		warn("Use of BaseAttribute is deprecated, use Container instead.", DeprecationWarning)
+		super(BaseAttribute, self).__init__(*args, **kw)
+
+class BaseDataAttribute(Container):
+	def __init__(self, *args, **kw):
+		warn("Use of BaseDataAttribute is deprecated, use DataAttribute instead.", DeprecationWarning)
+		super(BaseDataAttribute, self).__init__(*args, **kw)
