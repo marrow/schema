@@ -49,7 +49,7 @@ class TestAny(ValidationTest):
 			assert False, "Failed to raise a Concern."
 
 
-class TestAll(object):
+class TestAll(ValidationTest):
 	validator = SampleAll((length, )).validate
 	valid = ('Testing.', )
 	invalid = (True, ' ' * 21, ['foo'])
@@ -63,7 +63,7 @@ class TestAll(object):
 			assert False, "Failed to raise a Concern."
 
 
-class TestPipe(object):
+class TestPipe(ValidationTest):
 	validator = SamplePipe((length, )).validate
 	
 	valid = TestAll.valid
