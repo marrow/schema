@@ -83,6 +83,7 @@ class TestAttribute:
 		bar = Attribute(default=42)
 		baz = Attribute('bazzy')
 		diz = Attribute(default=lambda: 27)
+		din = Attribute(default=Attribute)
 	
 	def test_direct_access(self):
 		assert self.Sample.foo.__class__ is Attribute
@@ -102,6 +103,10 @@ class TestAttribute:
 		instance.bar
 		assert instance.__data__ == dict(bar=42)
 		self.Sample.bar.assign = False
+	
+	def test_callable_defaults(self):
+		instance = self.Sample()
+		assert instance.din is Attribute
 	
 	def test_nodefault(self):
 		instance = self.Sample()
