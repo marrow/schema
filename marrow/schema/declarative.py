@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from inspect import isclass
+from inspect import isroutine
 from .meta import Element
 
 
@@ -105,7 +105,7 @@ class Attribute(DataAttribute):
 			except AttributeError:
 				pass
 			else:
-				value = default() if callable(default) and not isclass(default) else default
+				value = default() if isroutine(default) else default
 				if self.assign:
 					self.__set__(obj, value)
 		
@@ -149,7 +149,7 @@ class CallbackAttribute(Attribute):
 		
 		value = super(CallbackAttribute, self).__get__(obj, cls)
 		
-		return value() if callable(value) else value
+		return value() if isroutine(value) else value
 
 
 # Deprecated naming conventions; for legacy use only.

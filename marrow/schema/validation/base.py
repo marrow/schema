@@ -381,3 +381,5 @@ class ValidatedAttribute(CallbackAttribute):
 	"""
 	
 	validator = CallbackAttribute(default=always)
+	
+	
