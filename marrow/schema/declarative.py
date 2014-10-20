@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+from inspect import isclass
 from .meta import Element
 
 
@@ -104,7 +105,7 @@ class Attribute(DataAttribute):
 			except AttributeError:
 				pass
 			else:
-				value = default() if callable(default) else default
+				value = default() if callable(default) and not isclass(default) else default
 				if self.assign:
 					self.__set__(obj, value)
 		
