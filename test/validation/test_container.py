@@ -6,6 +6,7 @@ import re
 
 from marrow.schema.compat import unicode
 from marrow.schema.validation.base import truthy, falsy, Instance
+from marrow.schema.validation.exc import Concern
 from marrow.schema.validation.testing import ValidationTest
 from marrow.schema.validation.container import *
 
@@ -47,7 +48,16 @@ class TestStringyIterable(ValidationTest):
 
 class TestIterableConcerns(object):
 	def test_singular_failure(self):
-		pass
+		try:
+			Iterable([truthy]).validate([True, False])
+		except Concern as e:
+			assert "Element 1" in e.message, "Should identify element failing validation."
+			assert not e.concerns, "Should not contain child concerns."
 	
 	def test_multiple_failure(self):
-		pass
+		try:
+			Iterable([truthy]).validate([0, False])
+		except Concern as e:
+			assert "multiple" in e.message.lower(), "Should indicate multiple failures."
+			print(e.concerns)
+			assert "Element 1" in e.concerns[1].message, "Should identify element failing validation."
