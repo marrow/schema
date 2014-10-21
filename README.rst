@@ -206,7 +206,7 @@ validate, is returned.  For example, the simple validator provided that always p
     
     print(always.validate("Hello world!"))  # Hello world!
 
-Writing your own validators can be as simple as subclassing Validator and overriding the `validate` method, however
+Writing your own validators can be as simple as subclassing Validator and overriding the ``validate`` method, however
 there are other (more declarative) ways to create custom validators.  Validators raise "concerns" if they encounter
 problems with the data being validated.  A Concern exception has a level, like a logging level, and only errors (and
 above) should be treated as such.
@@ -266,14 +266,14 @@ validators have such widespread usage they're importable straight from ``marrow.
 * ``AlwaysMissing`` — Value must be None or otherwise have a length of zero.  Singleton: ``missing``
 * ``Missing`` — A mixin-able version of AlwaysMissing using the ``missing`` attribute.
 * ``Callback`` — Execute a simple callback to validate the value.  More on this one later.
-* ``In`` — Value must be contained within the provided iterable (``choices``).
-* ``Contains`` — Value must contain (via ``in``) the provided value (``contains``).
-* ``Length`` — Value must have either an exact length or a length within a given range (``length``).  (Hint: assign a tuple or a ``slice()``.)
+* ``In`` — Value must be contained within the provided iterable, ``choices``.
+* ``Contains`` — Value must contain (via ``in``) the provided value, ``contains``.
+* ``Length`` — Value must have either an exact length or a length within a given range, ``length``.  (Hint: assign a tuple or a ``slice()``.)
 * ``Range`` — Value must exist within a specific range (``minimum`` and ``maximum``) either end of which may be unbounded.
-* ``Pattern`` — Value must match a regular expression (``pattern``).  The expression will be compiled for you during assignment if passing in raw strings.
-* ``Instance`` — Value must be an instance of the given class (``instance``) or an instance of one of a set of classes (by passing a tuple).
-* ``Subclass`` — Value must be a subclass of the given class (``subclass``) or a subclass of one of a set of classes (by passing a tuple).
-* ``Equal`` — Value must equal a given value (``equals``).
+* ``Pattern`` — Value must match a regular expression, ``pattern``.  The expression will be compiled for you during assignment if passing in raw strings.
+* ``Instance`` — Value must be an instance of the given class ``instance`` or an instance of one of a set of classes (by passing a tuple).
+* ``Subclass`` — Value must be a subclass of the given class ``subclass`` or a subclass of one of a set of classes (by passing a tuple).
+* ``Equal`` — Value must equal a given value, ``equals``.
 * ``Unique`` — No element of the provided iterable value may be repeated.  Uses sets, so all values must also be hashable.  Singleton: ``unique``
 
 4.3. Callback Validators
@@ -422,7 +422,7 @@ Version 1.1.0
   validation tools.
 
 * **Tests to Ludicrous Speed.**  Marrow Schema now has more individual tests (600+) than executable statements, and
-  they execute few seconds on most interpreters!  Remember, kids: mad science is never stopping to ask "what's the
+  they execute in a few seconds on most interpreters!  Remember, kids: mad science is never stopping to ask "what's the
   worst that could happen?"
 
 * **Expanded Travis coverage.**  Travis now runs the py26 and pypy3 test runners.
