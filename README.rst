@@ -203,7 +203,6 @@ an optional execution context passed positionally, in that order.  The value, po
 validate, is returned.  For example, the simple validator provided that always passes can be used like this:
 
     from marrow.schema.validation import always
-    
     print(always.validate("Hello world!"))  # Hello world!
 
 Writing your own validators can be as simple as subclassing Validator and overriding the `validate` method, however
@@ -214,15 +213,12 @@ above) should be treated as such.
 For now, though, we can write a validator that only accepts the number 27:
 
     from marrow.schema.validation import Concern, Validator
-    
     class TwentySeven(Validator):
         def validate(self, value, context=None):
             if value != 27:
                 raise Concern("Totally not twenty seven, dude.")
             return value
-    
     validate = TwentySeven().validate
-    
     assert validate(27) == 27
     validate(42)  # Boom!
 
@@ -230,18 +226,13 @@ You can see that validators should return the value if successful and raise an e
 validator to be more generic, allowing you to define any arbitrary number to compare against?
 
     from marrow.schema import Attribute
-    
     class Equals(Validator):
         value = Attribute()
-        
         def validate(self, value, context=None):
             if value != self.value:
                 raise Concern("Value of {0!r} doesn't match expectation of {1!r}.".format(value, self.value))
-            
             return value
-    
     validate = Equals(3).validate
-    
     assert validate(3) == 3
     validate(27)  # Boom!
 
@@ -283,11 +274,9 @@ Callback validators allow you to write validator logic using simple lambda state
 rapidly enter the realm of the spooky door when you realize the Callback validator class can be used as a decorator, though.  To see what we mean you could define the "Always" validator like this:
 
     from marrow.schema.validation import Callback
-    
     @Callback
     def always(validator, value, context=None):
         return value
-    
     assert always.validate(27) == 27
 
 The callback that callback validators use may return a value, raise a Concern like any normal ``validate`` method, or
