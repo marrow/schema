@@ -96,28 +96,71 @@ and submit a pull request.  This process is beyond the scope of this documentati
 
 There are four main classes provided for implementors:
 
-3.1. Container
+3.1. Element
+------------
+
+Instantiation order tracking and attribute naming / collection base class.
+
+To use, construct subclasses of the Element class whose attributes are themselves instances of Element subclasses.
+Five attributes on your subclass have magical properties:
+
+* `inst.__sequence__`
+  An atomically incrementing (for the life of the process) counter used to preserve order.  Each instance of an Element
+  subclass is given a new sequence number automatically.
+  
+* `inst.__name__`
+  Element subclasses automatically associate attributes that are Element subclass instances with the name of the
+  attribute they were assigned to.
+  
+* `cls.__attributes__`
+  An ordered dictionary of all Element subclass instances assigned as attributes to your class. Class inheritance of
+  this attribute is handled differently: it is a combination of the `__attributes__` of all parent classes.  **Note:**
+  This is only calculated at class construction time; this makes it efficient to consult frequently.
+  
+* `cls.__attributed__`
+  Called after class construction to allow you to easily perform additional work, post-annotation.  Should be a
+  classmethod for full effect.
+  
+* `cls.__fixup__`
+  If an instance of your Element subclass is assigned as a property to an Element subclass, this method of your class
+  will be called to notify you and allow you to make additional adjustments to the class using your subclass.  Should
+  be a classmethod.
+
+Generally you will want to use one of the helper classes provided (Container, Attribute, etc.) however this can be
+useful if you only require extremely light-weight attribute features on custom objects.
+
+3.2. Container
 --------------
 
-This class provides the underlying machinery for processing arguments and assigning values to instance attributes at
-class instantiation time.  Basically it provides ``__init__`` so you don't have to.
+The underlying machinery for handling class instantiation for schema elements whose primary purpose is containing other
+schema elements, i.e. Document, Record, CompoundWidget, etc.
 
-You can extend this to support validation during instantiation, for example, to check for required values.
+Association of declarative attribute names (at class construction time) is handled by the Element metaclass.
 
-3.2. DataAttribute
+Container subclasses have one additional magical property:
+
+* `inst.__data__`
+  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to `_data` from MongoEngine.
+
+Processes arguments and assigns values to instance attributes at class instantiation time, basically defining
+`__init__` so you don't have to.
+
+You can extend this to support validation during instantiation, or to process additional programmatic arguments.
+
+3.3. DataAttribute
 ------------------
 
 The base attribute class which implements the descriptor protocol, pulling the instance value of the attribute from
 the containing object's ``__data__`` dictionary.  If an attempt is made to read an attribute that does not have a
 corresponding value in the data dictionary an ``AttributeError`` will be raised.
 
-3.3. Attribute
+3.4. Attribute
 --------------
 
 A subclass of ``DataAttribute`` which adds the ability to re-name the ``__data__`` key (name) and define a default
 value.
 
-3.4. Attributes
+3.5. Attributes
 ---------------
 
 A declarative attribute you can use in your own ``Container`` subclasses to provide views across the known attributes
@@ -152,6 +195,17 @@ Version 1.0.2
   example, to ensure the order of positional arguments don't change even if you override the default value through
   redefinition.
 
+Version 1.1.0
+-------------
+
+* **Massive update to documentation.**  Now most lines of code are also covered by descriptive comments.
+
+* **Validation primitives.**  A large component of this release is a newly added and fully tested suite of data
+  validation tools.
+
+* **Tests to Ludicrous Speed.**  Marrow Schema now has more individual tests (600+) than executable statements, and
+  they execute in less than two seconds on most interpreters!  Remember, kids: mad science is never stopping to ask
+  "what's the worst that could happen?"
 
 5. License
 ==========
