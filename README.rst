@@ -202,11 +202,9 @@ Given an instance of a Validator subclass you simply call the ``inst.validate`` 
 an optional execution context passed positionally, in that order.  The value, potentially transformed as required to
 validate, is returned.  For example, the simple validator provided that always passes can be used like this:
 
-```python
-from marrow.schema.validation import always
-
-print(always.validate("Hello world!"))  # Hello world!
-```
+    from marrow.schema.validation import always
+    
+    print(always.validate("Hello world!"))  # Hello world!
 
 Writing your own validators can be as simple as subclassing Validator and overriding the `validate` method, however
 there are other (more declarative) ways to create custom validators.  Validators raise "concerns" if they encounter
@@ -215,41 +213,37 @@ above) should be treated as such.
 
 For now, though, we can write a validator that only accepts the number 27:
 
-```python
-from marrow.schema.validation import Concern, Validator
-
-class TwentySeven(Validator):
-	def validate(self, value, context=None):
-		if value != 27:
-			raise Concern("Totally not twenty seven, dude.")
-		return value
-
-validate = TwentySeven().validate
-
-assert validate(27) == 27
-validate(42)  # Boom!
-```
+    from marrow.schema.validation import Concern, Validator
+    
+    class TwentySeven(Validator):
+        def validate(self, value, context=None):
+            if value != 27:
+                raise Concern("Totally not twenty seven, dude.")
+            return value
+    
+    validate = TwentySeven().validate
+    
+    assert validate(27) == 27
+    validate(42)  # Boom!
 
 You can see that validators should return the value if successful and raise an exception if not.  What if you want the
 validator to be more generic, allowing you to define any arbitrary number to compare against?
 
-```python
-from marrow.schema import Attribute
-
-class Equals(Validator):
-	value = Attribute()
-	
-	def validate(self, value, context=None):
-		if value != self.value:
-			raise Concern("Value of {0!r} doesn't match expectation of {1!r}.".format(value, self.value))
-		
-		return value
-
-validate = Equals(3).validate
-
-assert validate(3) == 3
-validate(27)  # Boom!
-```
+    from marrow.schema import Attribute
+    
+    class Equals(Validator):
+        value = Attribute()
+        
+        def validate(self, value, context=None):
+            if value != self.value:
+                raise Concern("Value of {0!r} doesn't match expectation of {1!r}.".format(value, self.value))
+            
+            return value
+    
+    validate = Equals(3).validate
+    
+    assert validate(3) == 3
+    validate(27)  # Boom!
 
 That's basically the built-in Equal validator, right there.  (You'll notice that it doesn't even care if the value is a
 number or not.  Python is awesome that way.)
@@ -288,15 +282,13 @@ validators have such widespread usage they're importable straight from ``marrow.
 Callback validators allow you to write validator logic using simple lambda statements, amongst other uses.  They
 rapidly enter the realm of the spooky door when you realize the Callback validator class can be used as a decorator, though.  To see what we mean you could define the "Always" validator like this:
 
-```python
-from marrow.schema.validation import Callback
-
-@Callback
-def always(validator, value, context=None):
-	return value
-
-assert always.validate(27) == 27
-```
+    from marrow.schema.validation import Callback
+    
+    @Callback
+    def always(validator, value, context=None):
+        return value
+    
+    assert always.validate(27) == 27
 
 The callback that callback validators use may return a value, raise a Concern like any normal ``validate`` method, or
 simply *return* a Concern instance which will then be raised on behalf of the callback.  The original callback function
