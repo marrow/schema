@@ -14,12 +14,6 @@ from inspect import isroutine
 from .meta import Element
 
 
-# ## Module Globals
-
-# Canary singleton to allow us to detect when a default value is not assigned.  (Can't use None for this purpose.)
-nil = object()
-
-
 # ## Class Definitions
 
 class Container(Element):
@@ -30,14 +24,14 @@ class Container(Element):
 	
 	Container subclasses have one additional magical property:
 	
-	* `inst.__data__`
-	  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to `_data` from MongoEngine.
+	* ``inst.__data__``
+	  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to ``_data`` from MongoEngine.
 	"""
 	
 	def __init__(self, *args, **kw):
 		"""Process arguments and assign values to instance attributes at class instantiation time.
 		
-		Basically defining `__init__` so you don't have to.
+		Basically defining ``__init__`` so you don't have to.
 		
 		You can extend this to support validation during instantiation, or to process additional programmatic
 		arguments.
@@ -108,7 +102,7 @@ class Container(Element):
 class DataAttribute(Element):
 	"""Descriptor protocol support for Element containers.
 	
-	Performs the task of data warehousing in the containing instance's `__data__` dictionary.
+	Performs the task of data warehousing in the containing instance's ``__data__`` dictionary.
 	"""
 	
 	def __get__(self, obj, cls=None):
@@ -134,7 +128,7 @@ class DataAttribute(Element):
 		obj.__data__[self.__name__] = value
 	
 	def __delete__(self, obj):
-		"""Executed via the `del` statement with a DataAttribute instance attribute as the argument."""
+		"""Executed via the ``del`` statement with a DataAttribute instance attribute as the argument."""
 		
 		# Delete the data completely from the warehouse.
 		del obj.__data__[self.__name__]
@@ -143,10 +137,11 @@ class DataAttribute(Element):
 class Attribute(Container, DataAttribute):
 	"""An attribute whose instance value is stored within the containing object.
 	
-	All "data" is stored in the container's `__data__` dictionary.  The key defaults to the Attribute's instance name
-	and can be overridden by passing a name as the first positional parameter, or as the `name` keyword argument.
+	All "data" is stored in the container's ``__data__`` dictionary.  The key defaults to the Attribute's instance name
+	and can be overridden, unlike DataAttribute, by passing a name as the first positional parameter, or as the
+	``name`` keyword argument.
 	
-	If `assign` is True and the default value is ever utilized, immediately pretend the default value was assigned to
+	If ``assign`` is True and the default value is ever utilized, immediately pretend the default value was assigned to
 	this attribute.  (Override this in subclasses.)
 	"""
 	
@@ -155,12 +150,12 @@ class Attribute(Container, DataAttribute):
 	assign = False  # If the value is missing, do we outright create it?
 	
 	def __init__(self, *args, **kw):
-		"""A tiny helper to work around the dunderscores around `name` during instantiation.
+		"""A tiny helper to work around the dunderscores around ``name`` during instantiation.
 		
-		The value must always be retrieved as `inst.__name__`, but may be assigned using the shorthand.
+		The value must always be retrieved as ``inst.__name__``, but may be assigned using the shorthand.
 		"""
 		
-		# Re-map `name` to `__name__` in the keyword arguments, if present.
+		# Re-map ``name`` to ``__name__`` in the keyword arguments, if present.
 		if 'name' in kw:
 			kw['__name__'] = kw.pop('name')
 		
@@ -170,7 +165,7 @@ class Attribute(Container, DataAttribute):
 		super(Attribute, self).__init__(*args, **kw)
 	
 	def __get__(self, obj, cls=None):
-		"""Executed when retrieving a DataAttribute instance attribute."""
+		"""Executed when retrieving an Attribute instance attribute."""
 		
 		# If this is class attribute (and not instance attribute) access, we return ourselves.
 		if obj is None:
@@ -202,12 +197,15 @@ class Attribute(Container, DataAttribute):
 
 
 class CallbackAttribute(Attribute):
-	"""An attribute that automatically executes the value upon retrieval, if callable.
+	"""An attribute that automatically executes the value upon retrieval, if a callable routine.
 	
 	Frequently used by validation, transformation, and object mapper systems.
 	"""
 	
 	def __get__(self, obj, cls=None):
+		"""Executed when retrieving an Attribute instance attribute."""
+		
+		# If this is class attribute (and not instance attribute) access, we return ourselves.
 		if obj is None:
 			return self
 		
@@ -216,14 +214,20 @@ class CallbackAttribute(Attribute):
 		return value() if isroutine(value) else value
 
 
+# ## Deprecated Classes
 # Deprecated naming conventions; for legacy use only.
 
 class BaseAttribute(Container):
+	"""BaseAttribute is now called Container."""
+	
 	def __init__(self, *args, **kw):
 		warn("Use of BaseAttribute is deprecated, use Container instead.", DeprecationWarning)
 		super(BaseAttribute, self).__init__(*args, **kw)
 
+
 class BaseDataAttribute(Container):
+	"""BaseDataAttribute is now called DataAttribute."""
+	
 	def __init__(self, *args, **kw):
 		warn("Use of BaseDataAttribute is deprecated, use DataAttribute instead.", DeprecationWarning)
 		super(BaseDataAttribute, self).__init__(*args, **kw)
