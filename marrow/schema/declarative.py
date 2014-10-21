@@ -209,8 +209,10 @@ class CallbackAttribute(Attribute):
 		if obj is None:
 			return self
 		
+		# Attempt to retrieve the data from the warehouse.
 		value = super(CallbackAttribute, self).__get__(obj, cls)
 		
+		# Return the value, or execute it and return the result.
 		return value() if isroutine(value) else value
 
 
