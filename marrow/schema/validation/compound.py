@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+# ## Imports
+
 from __future__ import unicode_literals
 
 import sys
@@ -13,6 +15,7 @@ from ..compat import unicode, str
 from .base import Concern, Validator
 
 
+# ## Class Definitions
 
 class Compound(Validator):
 	"""Allow for syntactically simple control over groups of validators.
