@@ -186,7 +186,208 @@ on that container.  Can provide a filter (which uses ``isinstance``) to limit to
 Always results in an ``OrderedDict``.
 
 
-4. Version History
+4. Validation
+=============
+
+Marrow Schema offers a wide variety of data validation primitives.  These are constructed declaratively where possible,
+and participate in Marrow Schema's Attribute protocol as both Containers and Attributes.
+
+You can create hybrid subclasses of individual validator classes to create basic compound validators.  Dedicated
+compound validators are also provided which give more fine-grained control over how the child validators are executed.
+
+4.1. Validation Basics
+----------------------
+
+Given an instance of a Validator subclass you simply call the ``inst.validate`` method with the value to validate and
+an optional execution context passed positionally, in that order.  The value, potentially transformed as required to
+validate, is returned.  For example, the simple validator provided that always passes can be used like this:
+
+	from marrow.schema.validation import always
+	
+	print(always.validate("Hello world!"))  # Hello world!
+
+Writing your own validators can be as simple as subclassing Validator and overriding the `validate` method, however
+there are other (more declarative) ways to create custom validators.  Validators raise "concerns" if they encounter
+problems with the data being validated.  A Concern exception has a level, like a logging level, and only errors (and
+above) should be treated as such.
+
+For now, though, we can write a validator that only accepts the number 27:
+
+	from marrow.schema.validation import Concern, Validator
+	
+	class TwentySeven(Validator):
+		def validate(self, value, context=None):
+			if value != 27:
+				raise Concern("Totally not twenty seven, dude.")
+			return value
+	
+	validate = TwentySeven().validate
+	
+	assert validate(27) == 27
+	validate(42)  # Boom!
+
+You can see that validators should return the value if successful and raise an exception if not.  What if you want the
+validator to be more generic, allowing you to define any arbitrary number to compare against?
+
+	from marrow.schema import Attribute
+	
+	class Equals(Validator):
+		value = Attribute()
+		
+		def validate(self, value, context=None):
+			if value != self.value:
+				raise Concern("Value of {0!r} doesn't match expectation of {1!r}.".format(value, self.value))
+			
+			return value
+	
+	validate = Equals(3).validate
+	
+	assert validate(3) == 3
+	validate(27)  # Boom!
+
+That's basically the built-in Equal validator, right there.  (You'll notice that it doesn't even care if the value is a
+number or not.)
+
+4.2. Basic Validators
+---------------------
+
+Marrow Schema includes a *lot* of validators for you to use.  They tend to be organized based on purpose, but the basic
+validators have such widespread usage they're importable straight from ``marrow.schema.validation``.
+
+* ``Validator`` — the base validator; a no-op.
+* ``Always`` — effectively the same in effect as using Validator directly, always passes.  Singleton: ``always``
+* ``Never`` — the opposite of Always, this never passes.  Singleton: ``never``
+* ``AlwaysTruthy`` — the value must always evaluate to True.  Singleton: ``truthy``
+* ``Truthy`` — A mixin-able version of AlwaysTruthy whose behaviour is toggled by the ``truthy`` attribute.
+* ``AlwaysFalsy`` — as per AlwaysTruthy.  Singleton: ``falsy``
+* ``Falsy`` — A mixin-able version of AlwaysFalsy, as per Truthy with the ``falsy`` attribute instead.
+* ``AlwaysRequried`` — Value must be non-None.  Singleton: ``required``
+* ``Required`` — A mixin-able version of AlwaysRequired using the ``required`` attribute.
+* ``AlwaysMissing`` — Value must be None or otherwise have a length of zero.  Singleton: ``missing``
+* ``Missing`` — A mixin-able version of AlwaysMissing using the ``missing`` attribute.
+* ``Callback`` — Execute a simple callback to validate the value.  More on this one later.
+* ``In`` — Value must be contained within the provided iterable (``choices``).
+* ``Contains`` — Value must contain (via ``in``) the provided value (``contains``).
+* ``Length`` — Value must have either an exact length or a length within a given range (``length``).  (Hint: assign a tuple or a ``slice()``.)
+* ``Range`` — Value must exist within a specific range (``minimum`` and ``maximum``) either end of which may be unbounded.
+* ``Pattern`` — Value must match a regular expression (``pattern``).  The expression will be compiled for you during assignment if passing in raw strings.
+* ``Instance`` — Value must be an instance of the given class (``instance``) or an instance of one of a set of classes (by passing a tuple).
+* ``Subclass`` — Value must be a subclass of the given class (``subclass``) or a subclass of one of a set of classes (by passing a tuple).
+* ``Equal`` — Value must equal a given value (``equals``).
+* ``Unique`` — No element of the provided iterable value may be repeated.  Uses sets, so all values must also be hashable.  Singleton: ``unique``
+
+4.3. Callback Validators
+------------------------
+
+Callback validators allow you to write validator logic using simple lambda statements, amongst other uses.  They
+rapidly enter the realm of the spooky door when you realize the Callback validator class can be used as a decorator, though.  To see what we mean you could define the "Always" validator like this:
+
+	from marrow.schema.validation import Callback
+	
+	@Callback
+	def always(validator, value, context=None):
+		return value
+	
+	assert always.validate(27) == 27
+
+The callback that callback validators use may return a value, raise a Concern like any normal ``validate`` method, or
+simply *return* a Concern instance which will then be raised on behalf of the callback.  The original callback function
+is reachable as ``always.validator`` in this instance.
+
+(If the decorator thing has you scratching your head, notice that the callback is assigned using an Attribute instance… and positional arguments fill out attributes!  Magic!)
+
+4.4. Compound Validators
+------------------------
+
+Compound validators use other validators as declarative attributes.  Additionally, you can pass validators at class
+instantiation time positionally or using the ``validators`` keyword argument.  Declarative child validators take
+priority.
+
+The ``__validators__`` aggregate is provided to filter the known attributes of the Compound subclass to just the
+assigned validators.  A generator named ``_validators`` is provided to merge the two sources.
+
+The purpose of this type of validator is to give you additional control over how multiple validators are run against a
+single value, and how validators are run against collections (such as lists and dictionaries).
+
+* ``Compound`` — The base class providing validator aggregation; effectively a no-op.
+* ``Any`` — Stop processing on first success, but gather multiple failures into one.
+* ``All`` — Ensure all validators pass, but stop processing on the first failure.  Does not gather failures.
+* ``Pipe`` — Execute all validators and only declare success if all pass.  Gathers failures together.
+* ``Iterable`` — Value must be an iterable whose elements pass validation using the base scheme defined by ``require``,
+  generally one of Any, All, or Pipe.  (The class, not an instance of the class.)
+* ``Mapping`` — Value must be a mapping (dict-like) whose values non-recursively validate using the base scheme
+  defined by ``require``.
+
+4.5. Date and Time Validators
+-----------------------------
+
+* ``Date`` — A Range filter that only accepts datetime and date instances.
+* ``Time`` — A Range filter that only accepts datetime and time instances.
+* ``DateTime`` — A Range filter that only accepts datetime instances.
+* ``Delta`` — A Range filter that only accepts timedelta instances.
+
+4.6. Geographic Validators
+--------------------------
+
+All have singletons using the all-lower-case name.
+
+* ``Latitude`` — A compound validator ensuring the value is a number between -90 and 90 (degrees).
+* ``Longitude`` — A compound validator ensuring the value is a number between -180 and 180 (degrees).
+* ``Position`` — A compound validator ensuring the value is a sequence of length two whose first element is a valid
+  latitude and whose second element is a valid longitude.
+
+4.7. Network-Related Validators
+-------------------------------
+
+All have singletons using the all-lower-case name.
+
+* ``IPv4`` — IPv4 dot-notation address.
+* ``IPv4`` — IPv6 dot-notation address.
+* ``CIDRv4`` — IPv4 network range.
+* ``CIDRv6`` — IPv6 network range.
+* ``IPAddress`` — An IPv4 *or* IPv6 address.
+* ``CIDR`` — An IPv4 *or* IPv6 network range.
+* ``Hostname`` — Valid ASCII host name validator.
+* ``DNSName`` — Valid DNS RFC host name validator.
+* ``MAC`` — Media Access Control (MAC) address validator.
+* ``URI`` — Uniform Resource Locator (URI) validator.
+
+4.8. Regular Expression Pattern Validators
+------------------------------------------
+
+These were not more specific to another task.  All have singletons using the all-lower-case name.
+
+* ``Alphanumeric`` — Case-insensitive letters and numbers.
+* ``Username`` — Simple username validator: leading character must be alphabetical, subsequent characters may be alphanumeric, hyphen, period, or underscore.
+* ``TwitterUsername`` — A validator for modern Twitter handles.
+* ``FacebookUsername`` — A validator for modern Facebook usernames.
+* ``CreditCard`` — A basic CC validator; does not validate checksum.
+* ``HexColor`` — Hashmark color code of either three or six elements.  (Half-byte or full-byte RGB accuracy.)
+* ``AlphaHexColor`` — Hashmark color code of either four or eight elements.  (Half-byte or full-byte RGBA accuracy.)
+* ``ISBN`` — A very complete ISBN validator.
+* ``Slug`` — Generally acceptable URL component validator.  Includes word characters, underscore, and hyphen.
+* ``UUID`` — Basic UUID validation.  Accepts technically invalid UUIDs that are nontheless well-formed.
+
+4.9. Utilities
+--------------
+
+* ``marrow.schema.validation:Validated`` — A mix-in for Attribute subclasses that performs
+  validation on any attempt to assign a value.  Not useful by itself.
+* ``marrow.schema.validation.util:SliceAttribute`` — Enforce a typecasting to a slice() instance by consuming
+  iterables.
+* ``marrow.schema.validation.util:RegexAttribute`` — Automatically attempt to ``re.compile`` objects that do not have a ``match`` method.
+
+4.9.1 Testing
+~~~~~~~~~~~~~
+
+A helper class is provided to aid in testing your own validators.  It is a test generator allowing you to quickly and
+easily define a validator and iterables of valid and invalid values to try.  This class is used extensively by Marrow
+Schema itself and is agnostic to your preferred test runner.  (As long as the runner understands test generators.)
+
+This utility class (``marrow.schema.validation.testing:ValidationTest``) has been tested under Nose and py.test.
+
+
+5. Version History
 ==================
 
 Version 1.0
@@ -226,12 +427,12 @@ Version 1.1.0
 
 * **Expanded Travis coverage.**  Travis now runs the py26 and pypy3 test runners.
 
-5. License
+6. License
 ==========
 
 Marrow Schema has been released under the MIT Open Source license.
 
-5.1. The MIT License
+6.1. The MIT License
 --------------------
 
 Copyright © 2013-2014 Alice Bevan-McGregor and contributors.
