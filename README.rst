@@ -204,8 +204,10 @@ Version 1.1.0
   validation tools.
 
 * **Tests to Ludicrous Speed.**  Marrow Schema now has more individual tests (600+) than executable statements, and
-  they execute in less than two seconds on most interpreters!  Remember, kids: mad science is never stopping to ask
-  "what's the worst that could happen?"
+  they execute few seconds on most interpreters!  Remember, kids: mad science is never stopping to ask "what's the
+  worst that could happen?"
+
+* **Expanded Travis coverage.**  Travis now runs the py26 and pypy3 test runners.
 
 5. License
 ==========
