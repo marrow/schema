@@ -104,24 +104,24 @@ Instantiation order tracking and attribute naming / collection base class.
 To use, construct subclasses of the Element class whose attributes are themselves instances of Element subclasses.
 Five attributes on your subclass have magical properties:
 
-* `inst.__sequence__`
+* ``inst.__sequence__``
   An atomically incrementing (for the life of the process) counter used to preserve order.  Each instance of an Element
   subclass is given a new sequence number automatically.
   
-* `inst.__name__`
+* ``inst.__name__``
   Element subclasses automatically associate attributes that are Element subclass instances with the name of the
   attribute they were assigned to.
   
-* `cls.__attributes__`
+* ``cls.__attributes__``
   An ordered dictionary of all Element subclass instances assigned as attributes to your class. Class inheritance of
-  this attribute is handled differently: it is a combination of the `__attributes__` of all parent classes.  **Note:**
-  This is only calculated at class construction time; this makes it efficient to consult frequently.
+  this attribute is handled differently: it is a combination of the ``__attributes__`` of all parent classes.
+  **Note:** This is only calculated at class construction time; this makes it efficient to consult frequently.
   
-* `cls.__attributed__`
+* ``cls.__attributed__``
   Called after class construction to allow you to easily perform additional work, post-annotation.  Should be a
   classmethod for full effect.
   
-* `cls.__fixup__`
+* ``cls.__fixup__``
   If an instance of your Element subclass is assigned as a property to an Element subclass, this method of your class
   will be called to notify you and allow you to make additional adjustments to the class using your subclass.  Should
   be a classmethod.
@@ -139,11 +139,11 @@ Association of declarative attribute names (at class construction time) is handl
 
 Container subclasses have one additional magical property:
 
-* `inst.__data__`
-  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to `_data` from MongoEngine.
+* ``inst.__data__``
+  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to ``_data`` from MongoEngine.
 
 Processes arguments and assigns values to instance attributes at class instantiation time, basically defining
-`__init__` so you don't have to.
+``__init__`` so you don't have to.
 
 You can extend this to support validation during instantiation, or to process additional programmatic arguments.
 
