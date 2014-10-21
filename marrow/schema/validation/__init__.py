@@ -6,4 +6,4 @@ from .base import Validator, Callback, In, Contains, Length, Range, Pattern, Ins
 from .base import Always, always, Never, never, Unique, unique
 from .base import AlwaysTruthy, truthy, Truthy, AlwaysFalsy, falsy, Falsy
 from .base import AlwaysRequired, required, Required, AlwaysMissing, missing, Missing
-from .base import ValidatedAttribute
+from .base import Validated

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import re
 
+from marrow.schema import Attribute, Container
 from marrow.schema.compat import unicode
 from marrow.schema.validation.testing import ValidationTest
 from marrow.schema.validation.base import *
@@ -305,3 +306,32 @@ class TestUnique(object):
 	
 	def test_dict(self):
 		self._do(dict(bob=27, dole=42), dict(prince=12, pepper=12))
+
+
+class TestValidated(ValidationTest):
+	class Sample(Container):
+		foo = Validated(validator=Equal(27))
+	
+	def test_pass(self):
+		inst = self.Sample(27)
+		assert inst.foo == 27
+		
+		inst = self.Sample()
+		inst.foo = 27
+	
+	def test_fail(self):
+		try:
+			self.Sample(42)
+		except Concern as e:
+			pass
+		else:
+			assert False, "Failed to raise a Concern."
+		
+		inst = self.Sample()
+		
+		try:
+			inst.foo = 42
+		except Concern as e:
+			pass
+		else:
+			assert False, "Failed to raise a Concern."

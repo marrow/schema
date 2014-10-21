@@ -382,12 +382,18 @@ class Unique(Validator):
 unique = Unique()
 
 
-class ValidatedAttribute(CallbackAttribute):
+class Validated(Attribute):
 	"""A small attribute helper to validate values as they are assigned.
 	
-	Can be used as a mixin, i.e. to provide typecasting in addition to validation.
+	Primarily used as a mixin, i.e. to provide validation in addition to typecasting.
 	"""
 	
 	validator = CallbackAttribute(default=always)
 	
-	
+	def __set__(self, obj, value):
+		"""Executed when assigning a value to a Validated instance attribute."""
+		
+		self.validator.validate(value, obj)
+		
+		# Store the (validated) value in the warehouse.
+		super(Validated, self).__set__(obj, value)
