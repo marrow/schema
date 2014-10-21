@@ -5,11 +5,13 @@ import warnings
 
 from marrow.schema.compat import unicode
 from marrow.schema.declarative import BaseAttribute, BaseDataAttribute
+from marrow.schema.util import DeclarativeAttributes
 
 
 DEPRECATED = (
 		(BaseAttribute, 'Container'),
 		(BaseDataAttribute, 'DataAttribute'),
+		(DeclarativeAttributes, 'Attributes')
 	)
 
 
