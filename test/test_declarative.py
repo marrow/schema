@@ -2,7 +2,7 @@
 
 import pytest
 
-from marrow.schema.declarative import Container, DataAttribute, Attribute
+from marrow.schema.declarative import Container, DataAttribute, Attribute, CallbackAttribute
 
 
 class TestContainer:
@@ -81,8 +81,11 @@ class TestAttribute:
 	class Sample(Container):
 		foo = Attribute()
 		bar = Attribute(default=42)
-		baz = Attribute('bazzy')
+		bazfoo = Attribute(name='fooey')
+		bazbar = Attribute(__name__='barey')
+		bazbaz = Attribute('bazzy')
 		diz = Attribute(default=lambda: 27)
+		din = Attribute(default=Attribute)
 	
 	def test_direct_access(self):
 		assert self.Sample.foo.__class__ is Attribute
@@ -102,6 +105,10 @@ class TestAttribute:
 		instance.bar
 		assert instance.__data__ == dict(bar=42)
 		self.Sample.bar.assign = False
+	
+	def test_callable_defaults(self):
+		instance = self.Sample()
+		assert instance.din is Attribute
 	
 	def test_nodefault(self):
 		instance = self.Sample()
@@ -125,5 +132,13 @@ class TestAttribute:
 		assert instance.__data__ == dict(foo=27)
 	
 	def test_othername(self):
-		instance = self.Sample(baz="Hello, world!")
-		assert instance.__data__ == dict(bazzy="Hello, world!")
+		instance = self.Sample(bazfoo="Hello", bazbar="world", bazbaz="again!")
+		assert instance.__data__ == dict(fooey="Hello", barey="world", bazzy="again!")
+
+
+class TestCallbackAttribute:
+	class Sample(Container):
+		cb = CallbackAttribute()
+	
+	def test_selfretrieval(self):
+		assert self.Sample.cb is self.Sample.__dict__['cb']
