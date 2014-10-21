@@ -19,7 +19,9 @@ class Concern(Exception):
 	def __init__(self, level=ERROR, message="Unspecified error.", *args, **kw):
 		"""Can be instantiated with the message first (and no way to populate a level other than ERROR)."""
 		
-		if not isinstance(level, int):
+		if isinstance(level, int):
+			args = (level, message) + args
+		else:
 			args = (message, ) + args
 			message = level
 			level = ERROR
