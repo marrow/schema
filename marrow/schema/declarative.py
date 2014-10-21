@@ -1,24 +1,69 @@
 # encoding: utf-8
 
+"""Marrow Schema base class definitions.
+
+These are the most frequently used base classes provided by Marrow Schema.
+"""
+
+# ## Imports
+
+from __future__ import unicode_literals
+
 from warnings import warn
 from inspect import isroutine
 from .meta import Element
 
 
+# ## Module Globals
+
+# Canary singleton to allow us to detect when a default value is not assigned.  (Can't use None for this purpose.)
 nil = object()
 
 
+# ## Class Definitions
+
 class Container(Element):
+	"""The underlying machinery for handling class instantiation for schema elements whose primary purpose is
+	containing other schema elements, i.e. Document, Record, CompoundWidget, etc.
+	
+	Association of declarative attribute names (at class construction time) is handled by the Element metaclass.
+	
+	Container subclasses have one additional magical property:
+	
+	* `inst.__data__`
+	  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to `_data` from MongoEngine.
+	"""
+	
 	def __init__(self, *args, **kw):
-		super(Container, self).__init__()
-		arguments = self.__process_arguments(args, kw)
+		"""Process arguments and assign values to instance attributes at class instantiation time.
 		
+		Basically defining `__init__` so you don't have to.
+		
+		You can extend this to support validation during instantiation, or to process additional programmatic
+		arguments.
+		"""
+		
+		# Inherit behaviour from Element, notably we want to track our instantiation sequence.
+		super(Container, self).__init__()
+		
+		# Do the heavy lifting of merging positional and keyword arguments.
+		arguments = self._process_arguments(args, kw)
+		
+		# Prepare the attribute value warehouse for this instance.
 		self.__data__ = dict()
 		
+		# Assign valid attributes.
 		for name, value in arguments.items():
 			setattr(self, name, value)
 	
-	def __process_arguments(self, args, kw):
+	def _process_arguments(self, args, kw):
+		"""Map positional to keyword arguments, identify invalid assignments, and return the result.
+		
+		This is likely generic enough to be useful as a standalone utility function, and goes to a fair amount of
+		effort to ensure raised exceptions are as Python-like as possible.
+		"""
+		
+		# Ensure we were not passed too many arguments.
 		if len(args) > len(self.__attributes__):
 			raise TypeError('{0} takes no more than {1} argument{2} ({3} given)'.format(
 					self.__class__.__name__,
@@ -27,9 +72,13 @@ class Container(Element):
 					len(args)
 				))
 		
-		names = [name for name in self.__attributes__.keys() if not name[0] == '_'][:len(args)]
+		# Retrieve the names associated with the positional parameters.
+		names = [name for name in self.__attributes__.keys() if name[0] != '_' or name == '__name__'][:len(args)]
+		
+		# Sets provide a convienent way to identify intersections.
 		duplicates = set(kw.keys()) & set(names)
 		
+		# Given duplicate values, explode gloriously.
 		if duplicates:
 			raise TypeError('{0} got multiple values for keyword argument{1}: {2}'.format(
 					self.__class__.__name__,
@@ -37,25 +86,39 @@ class Container(Element):
 					', '.join(duplicates)
 				))
 		
+		# Perform the final combination of positional and keyword arguments.
 		result = dict(kw, **dict((names[i], arg) for i, arg in enumerate(args)))
+		
+		# Again use sets, this time to identify unknown keys.
 		unknown = set(result.keys()) - set(self.__attributes__.keys())
 		
+		# Given unknown keys, explode gloriously.
 		if unknown:
-			print(unknown)
 			raise TypeError('{0} got unexpected keyword argument{1}: {2}'.format(
 					self.__class__.__name__,
 					'' if len(unknown) == 1 else 's',
 					', '.join(unknown)
 				))
 		
+		__import__('pprint').pprint(result)
+		
 		return result
 
 
-class DataAttribute(Container):
+class DataAttribute(Element):
+	"""Descriptor protocol support for Element containers.
+	
+	Performs the task of data warehousing in the containing instance's `__data__` dictionary.
+	"""
+	
 	def __get__(self, obj, cls=None):
+		"""Executed when retrieving a DataAttribute instance attribute."""
+		
+		# If this is class attribute (and not instance attribute) access, we return ourselves.
 		if obj is None:
 			return self
 		
+		# Attempt to retrieve and return the data from the warehouse.
 		try:
 			return obj.__data__[self.__name__]
 		except KeyError:
@@ -65,77 +128,77 @@ class DataAttribute(Container):
 				))
 	
 	def __set__(self, obj, value):
+		"""Executed when assigning a value to a DataAttribute instance attribute."""
+		
+		# Simply store the value in the warehouse.
 		obj.__data__[self.__name__] = value
 	
 	def __delete__(self, obj):
+		"""Executed via the `del` statement with a DataAttribute instance attribute as the argument."""
+		
+		# Delete the data completely from the warehouse.
 		del obj.__data__[self.__name__]
 
 
-class Attribute(DataAttribute):
+class Attribute(Container, DataAttribute):
 	"""An attribute whose instance value is stored within the containing object.
 	
 	All "data" is stored in the container's `__data__` dictionary.  The key defaults to the Attribute's instance name
-	and can be overridden by passing a name as the first positional parameter, or as a keyword argument.
+	and can be overridden by passing a name as the first positional parameter, or as the `name` keyword argument.
 	
-	If `assign` is True if the default value is ever utilized, immediately pretend the default value was assigned to
-	this attribute.
+	If `assign` is True and the default value is ever utilized, immediately pretend the default value was assigned to
+	this attribute.  (Override this in subclasses.)
 	"""
 	
-	name = DataAttribute()
+	__name__ = DataAttribute()
 	default = DataAttribute()
 	assign = False  # If the value is missing, do we outright create it?
 	
+	def __init__(self, *args, **kw):
+		"""A tiny helper to work around the dunderscores around `name` during instantiation.
+		
+		The value must always be retrieved as `inst.__name__`, but may be assigned using the shorthand.
+		"""
+		
+		# Re-map `name` to `__name__` in the keyword arguments, if present.
+		if 'name' in kw:
+			kw['__name__'] = kw.pop('name')
+		
+		__import__('pprint').pprint(kw)
+		
+		# Process arguments upstream.
+		super(Attribute, self).__init__(*args, **kw)
+	
 	def __get__(self, obj, cls=None):
+		"""Executed when retrieving a DataAttribute instance attribute."""
+		
+		# If this is class attribute (and not instance attribute) access, we return ourselves.
 		if obj is None:
 			return self
 		
+		# Attempt to retrieve the data from the warehouse.
 		try:
-			name = self.name
+			return super(Attribute, self).__get__(obj, cls)
 		except AttributeError:
-			name = self.__name__
-		
-		try:
-			value = obj.__data__[name]
-		except KeyError:
-			value = nil
+			pass
 		
 		# Attempt to utilize the defined default value.
-		if value is nil:
-			try:
-				default = self.default
-			except AttributeError:
-				pass
-			else:
-				value = default() if isroutine(default) else default
-				if self.assign:
-					self.__set__(obj, value)
+		try:
+			default = self.default
+		except AttributeError:
+			pass
+		else:
+			# Process and optionally store the default value.
+			value = default() if isroutine(default) else default
+			if self.assign:
+				self.__set__(obj, value)
+			return value
 		
 		# If we still don't have a value, this attribute doesn't yet exist.
-		if value is nil:
-			raise AttributeError('\'{0}\' object has no attribute \'{1}\''.format(
-					obj.__class__.__name__,
-					self.__name__
-				))
-		
-		return value
-	
-	def __set__(self, obj, value):
-		try:
-			name = self.name
-		except AttributeError:
-			name = self.__name__
-		
-		obj.__data__[name] = value
-		
-		return name
-	
-	def __delete__(self, obj):
-		try:
-			name = self.name
-		except AttributeError:
-			name = self.__name__
-		
-		del obj.__data__[name]
+		raise AttributeError('\'{0}\' object has no attribute \'{1}\''.format(
+				obj.__class__.__name__,
+				self.__name__
+			))
 
 
 class CallbackAttribute(Attribute):

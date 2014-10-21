@@ -81,7 +81,9 @@ class TestAttribute:
 	class Sample(Container):
 		foo = Attribute()
 		bar = Attribute(default=42)
-		baz = Attribute('bazzy')
+		bazfoo = Attribute(name='fooey')
+		bazbar = Attribute(__name__='barey')
+		bazbaz = Attribute('bazzy')
 		diz = Attribute(default=lambda: 27)
 		din = Attribute(default=Attribute)
 	
@@ -130,8 +132,8 @@ class TestAttribute:
 		assert instance.__data__ == dict(foo=27)
 	
 	def test_othername(self):
-		instance = self.Sample(baz="Hello, world!")
-		assert instance.__data__ == dict(bazzy="Hello, world!")
+		instance = self.Sample(bazfoo="Hello", bazbar="world", bazbaz="again!")
+		assert instance.__data__ == dict(fooey="Hello", barey="world", bazzy="again!")
 
 
 class TestCallbackAttribute:
