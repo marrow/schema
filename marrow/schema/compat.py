@@ -19,9 +19,11 @@ py3 = sys.version_info > (3, )
 # ## Builtins Compatibility
 
 if py3:  # pragma: no cover
+	native = str
 	unicode = str
 	str = bytes
 else:  # pragma: no cover
+	native = str
 	unicode = unicode
 	str = str
 	range = xrange
