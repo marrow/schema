@@ -248,7 +248,7 @@ validator to be more generic, allowing you to define any arbitrary number to com
         
         def validate(self, value, context=None):
             if value != self.value:
-                raise Concern("Value of {0!r} doesn't match expectation of {1!r}.".format(value, self.value))
+                raise Concern("Value of {0!r} doesn't match expectation of {1!r}.", value, self.value)
             
             return value
     
@@ -273,9 +273,13 @@ constructor::
 
 An optional integer logging level, then a message followed by zero or more additional arguments, an optional
 ``concerns`` keyword-only argument that is either not supplied or an iterable of child ``Concern`` instances, and zero
-or more additional keyword arguments.  (The keyword-only business is enforced on both Python 2 and 3.)
+or more additional keyword arguments.  (The keyword-only business is enforced on both Python 2 and 3.)  Compound
+validators that aggregate multiple failures (i.e. ``Pipe``) automatically determine their aggregate ``Concern`` level
+from the maximum of the child concerns.
 
-``Concern`` instances render to the native unicode type (``unicode`` in Python 2, ``str`` in Python 3) the result of calling ``message.format(*args, **kw)`` using the arguments provided above.
+``Concern`` instances render to the native unicode type (``unicode`` in Python 2, ``str`` in Python 3) the result of
+calling ``message.format(*args, **kw)`` using the arguments provided above.  Care should be taken to only include
+JSON-safe datatypes in these arguments.
 
 
 4.2. Basic Validators
