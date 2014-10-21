@@ -39,21 +39,22 @@ Examples of use include:
 1.1 Goals
 ---------
 
-Marrow Schema was created with the goal of extracting a component common to nearly every database ORM, ODM, and widget
-system into a shared library to benefit all.  While some of the basic principles (data descriptors, etc.) are simple,
-few implementations are truly complete.  Often you would lose access to standard Python idioms, such as the use of
-positional arguments with class constructors.
+Marrow Schema was created with the goal of extracting a component common to nearly every database ORM, ODM, widget
+system, form validation library, structured serialzation format, or other schema-based tool into a common shared
+library to benefit all.  While some of the basic principles (data descriptors, etc.) are relatively simple, few
+implementations are truly complete.  Often you would lose access to standard Python idioms such as the use of
+positional arguments with class constructors or Pythonic exceptions.
 
-With a proven generic implementation we discovered quickly that the possibilities aren't limited to the typical uses.
-One commercial project that uses Marrow Schema does so to define generic CRUD controllers declaratively, greatly
+With a proven generic implementation we discovered quickly that the possibilities weren't limited to the typical uses.
+One commercial project that uses Marrow Schema does so to define generic CRUD *controllers* declaratively, greatly
 reducing development time and encouraging WORM (write-once, read-many) best practice.
 
 Marrow Schema additionally aims to have a very narrow scope and to "eat its own dog food", using a declarative syntax
 to define the declarative syntax. This is in stark contrast to alternatives (such as
 `scheme <https://github.com/siq/scheme/>`_) which utilize multiple metaclasses and a hodge-podge of magical attributes
 internally.  Or `guts <https://github.com/emolch/guts/>`_, which is heavily tied to its XML and YAML data processing
-capabilities.  Neither of these currently support positional instantiation, and both can be implemented as a superset
-of Marrow Schema.
+capabilities.  Neither of these currently support positional instantiation, and both can be implemented as a
+light-weight superset of Marrow Schema.
 
 
 2. Installation
@@ -63,10 +64,13 @@ Installing ``marrow.schema`` is easy, just execute the following in a terminal::
 
     pip install marrow.schema
 
+**Note:** We *strongly* recommend always using a container, virtualization, or sandboxing environment of some kind when
+developing using Python; installing things system-wide is yucky (for a variety of reasons) nine times out of ten.  We prefer light-weight `virtualenv <https://virtualenv.pypa.io/en/latest/virtualenv.html>`_, others prefer solutions as robust as `Vagrant <http://www.vagrantup.com>`_.
+
 If you add ``marrow.schema`` to the ``install_requires`` argument of the call to ``setup()`` in your applicaiton's
 ``setup.py`` file, Marrow Schema will be automatically installed and made available when your own application or
 library is installed.  We recommend using "less than" version numbers to ensure there are no unintentional
-side-effects when updating.  Use ``marrow.schema<1.1`` to get all bugfixes for the current release, and
+side-effects when updating.  Use ``marrow.schema<1.2`` to get all bugfixes for the current release, and
 ``marrow.schema<2.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
 
 
@@ -98,63 +102,65 @@ and submit a pull request.  This process is beyond the scope of this documentati
 3. Basic Concepts
 =================
 
-There are four main classes provided for implementors:
-
 3.1. Element
 ------------
 
 Instantiation order tracking and attribute naming / collection base class.
 
-To use, construct subclasses of the Element class whose attributes are themselves instances of Element subclasses.
-Five attributes on your subclass have magical properties:
+To use, construct subclasses of the ``Element`` class whose attributes are themselves instances of ``Element``
+subclasses.  Five attributes on your subclass have magical properties:
 
-* ``inst.__sequence__``
-  An atomically incrementing (for the life of the process) counter used to preserve order.  Each instance of an Element
-  subclass is given a new sequence number automatically.
+* ``inst.__sequence__`` — 
+  An atomically incrementing (for the life of the process) counter used to preserve order.  Each instance of an
+  ``Element`` subclass is given a new sequence number automatically.
   
-* ``inst.__name__``
-  Element subclasses automatically associate attributes that are Element subclass instances with the name of the
-  attribute they were assigned to.
+* ``inst.__name__`` — 
+  ``Element`` subclasses automatically associate attributes that are ``Element`` subclass instances with the name of
+  the attribute they were assigned to.
   
-* ``cls.__attributes__``
-  An ordered dictionary of all Element subclass instances assigned as attributes to your class. Class inheritance of
-  this attribute is handled differently: it is a combination of the ``__attributes__`` of all parent classes.
+* ``cls.__attributes__`` — 
+  An ordered dictionary of all ``Element`` subclass instances assigned as attributes to your class. Class inheritance
+  of this attribute is handled differently: it is a combination of the ``__attributes__`` of all parent classes.
   **Note:** This is only calculated at class construction time; this makes it efficient to consult frequently.
   
-* ``cls.__attributed__``
+* ``cls.__attributed__`` — 
   Called after class construction to allow you to easily perform additional work, post-annotation.  Should be a
   classmethod for full effect.
   
-* ``cls.__fixup__``
-  If an instance of your Element subclass is assigned as a property to an Element subclass, this method of your class
-  will be called to notify you and allow you to make additional adjustments to the class using your subclass.  Should
-  be a classmethod.
+* ``cls.__fixup__`` — 
+  If an instance of your ``Element`` subclass is assigned as a property to an ``Element`` subclass, this method of your
+  class will be called to notify you and allow you to make additional adjustments to the class using your subclass.
+  Should be a classmethod.
 
-Generally you will want to use one of the helper classes provided (Container, Attribute, etc.) however this can be
-useful if you only require extremely light-weight attribute features on custom objects.
+Generally you will want to use one of the helper classes provided (``Container``, ``Attribute``, etc.) however this can
+be useful if you only require extremely light-weight attribute features on custom objects.
 
 3.2. Container
 --------------
 
 The underlying machinery for handling class instantiation for schema elements whose primary purpose is containing other
-schema elements, i.e. Document, Record, CompoundWidget, etc.
+schema elements, i.e. ``Document``, ``Record``, ``CompoundWidget``, etc.
 
-Association of declarative attribute names (at class construction time) is handled by the Element metaclass.
-
-Container subclasses have one additional magical property:
-
-* ``inst.__data__``
-  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to ``_data`` from MongoEngine.
+Association of declarative attribute names (at class construction time) is handled by the ``Element`` metaclass.
 
 Processes arguments and assigns values to instance attributes at class instantiation time, basically defining
-``__init__`` so you don't have to.
+``__init__`` so you don't have to.  You could extend this to support validation during instantiation, or to process
+additional programmatic arguments, as examples, and benefit from not having to repeat the same leg-work each time.
 
-You can extend this to support validation during instantiation, or to process additional programmatic arguments.
+``Container`` subclasses have one additional magical property:
+
+* ``inst.__data__`` — 
+  Primary instance data storage for all ``DataAttribute`` instances.  Equivalent to ``_data`` from MongoEngine.
+
+Most of the data storage requirements of Marrow Schema-derived objects comes from this dictionary.  Additionally,
+Marrow Schema-derived objects tend to move data from the instance ``__dict__`` to this ``__data__`` dictionary, having
+an unfortunate side-effect on the class-based performance optimizations of Pypy.  We hope to resolve this in the future
+through optional annotations for that interpreter.
 
 3.3. DataAttribute
 ------------------
 
-Descriptor protocol support for Element subclasses.
+Descriptor protocol support for ``Element`` subclasses.
 
 The base attribute class which implements the descriptor protocol, pulling the instance value of the attribute from
 the containing object's ``__data__`` dictionary.  If an attempt is made to read an attribute that does not have a
@@ -165,13 +171,13 @@ corresponding value in the data dictionary an ``AttributeError`` will be raised.
 
 Re-naming, default value, and container support for data attributes.
 
-All "data" is stored in the container's ``__data__`` dictionary.  The key defaults to the Attribute's instance name
-and can be overridden, unlike DataAttribute, by passing a name as the first positional parameter, or as the
+All "data" is stored in the container's ``__data__`` dictionary.  The key defaults to the ``Attribute`` instance name
+and can be overridden, unlike ``DataAttribute``, by passing a name as the first positional parameter, or as the
 ``name`` keyword argument.
 
-May contain nested Element instances to define properties for your Attribute subclass declaratively.
+May contain nested ``Element`` instances to define properties for your ``Attribute`` subclass declaratively.
 
-If ``assign`` is True and the default value is ever utilized, immediately pretend the default value was assigned to
+If ``assign`` is ``True`` and the default value is ever utilized, immediately pretend the default value was assigned to
 this attribute.  (Override this in subclasses.)
 
 3.5. CallbackAttribute
@@ -179,41 +185,43 @@ this attribute.  (Override this in subclasses.)
 
 An attribute that automatically executes the value upon retrieval, if a callable routine.
 
-Frequently used by validation, transformation, and object mapper systems.
+Frequently used by validation, transformation, and object mapper systems, especially as default value attributes.  E.g.
+MongoEngine's ``choices`` argument to ``Field`` subclasses.
 
-3.5. Attributes
+3.6. Attributes
 ---------------
 
 A declarative attribute you can use in your own ``Container`` subclasses to provide views across the known attributes
-on that container.  Can provide a filter (which uses ``isinstance``) to limit to specific attributes.
+of that container.  Can provide a filter (which uses ``isinstance``) to limit to specific attributes.
 
-Always results in an ``OrderedDict``.
+This is a dynamic property that generates an ``OrderedDict`` on each retrieval.  If you wish to use it frequently it 
+would be prudent to make a more local-scope reference.
 
 
 4. Validation
 =============
 
 Marrow Schema offers a wide variety of data validation primitives.  These are constructed declaratively where possible,
-and participate in Marrow Schema's Attribute protocol as both Containers and Attributes.
+and participate in Marrow Schema's ``Element`` protocol as both ``Container`` and ``Attribute``.
 
 You can create hybrid subclasses of individual validator classes to create basic compound validators.  Dedicated
 compound validators are also provided which give more fine-grained control over how the child validators are executed.
+A hybrid validator's behaviour will depend on the order of the parent classes.  It will execute the parent validators
+until one fails, or all succeed.
 
 4.1. Validation Basics
 ----------------------
 
-Given an instance of a Validator subclass you simply call the ``inst.validate`` method with the value to validate and
+Given an instance of a ``Validator`` subclass you simply call the ``validate`` method with the value to validate and
 an optional execution context passed positionally, in that order.  The value, potentially transformed as required to
 validate, is returned.  For example, the simple validator provided that always passes can be used like this::
 
     from marrow.schema.validation import always
     
-    print(always.validate("Hello world!"))  # Hello world!
+    assert always.validate("Hello world!") == "Hello world!"
 
-Writing your own validators can be as simple as subclassing Validator and overriding the ``validate`` method, however
-there are other (more declarative) ways to create custom validators.  Validators raise "concerns" if they encounter
-problems with the data being validated.  A Concern exception has a level, like a logging level, and only errors (and
-above) should be treated as such.
+Writing your own validators can be as simple as subclassing ``Validator`` and overriding the ``validate`` method,
+however there are other (more declarative) ways to create custom validators.
 
 For now, though, we can write a validator that only accepts the number 27::
 
@@ -251,6 +259,24 @@ validator to be more generic, allowing you to define any arbitrary number to com
 
 That's basically the built-in Equal validator, right there.  (You'll notice that it doesn't even care if the value is a
 number or not.  Python is awesome that way.)
+
+4.1.1. Concerns
+~~~~~~~~~~~~~~~
+
+Validators raise "concerns" if they encounter problems with the data being validated.  A ``Concern`` exception has a
+level, identical to a logging level, and only errors (and above) should be treated as such.  This level defaults to
+``logging.ERROR``.  Because most validation concerns should probably be fatal, overriding this value isn't done much
+within Marrow Schema; it's mostly there for developer use.  Because of this, though, ``Concern`` has a somewhat strange
+constructor::
+
+    Concern([level, ]message, *args, concerns=[], **kw)
+
+An optional integer logging level, then a message followed by zero or more additional arguments, an optional
+``concerns`` keyword-only argument that is either not supplied or an iterable of child ``Concern`` instances, and zero
+or more additional keyword arguments.  (The keyword-only business is enforced on both Python 2 and 3.)
+
+``Concern`` instances render to the native unicode type (``unicode`` in Python 2, ``str`` in Python 3) the result of calling ``message.format(*args, **kw)`` using the arguments provided above.
+
 
 4.2. Basic Validators
 ---------------------
@@ -303,12 +329,12 @@ is reachable as ``always.validator`` in this instance.
 4.4. Compound Validators
 ------------------------
 
-Compound validators use other validators as declarative attributes.  Additionally, you can pass validators at class
-instantiation time positionally or using the ``validators`` keyword argument.  Declarative child validators take
-priority.
+Compound validators (imported from ``marrow.schema.validation.compound``) use other validators as declarative
+attributes.  Additionally, you can pass validators at class instantiation time positionally or using the ``validators``
+keyword argument.  Declarative child validators take priority.
 
-The ``__validators__`` aggregate is provided to filter the known attributes of the Compound subclass to just the
-assigned validators.  A generator named ``_validators`` is provided to merge the two sources.
+The ``__validators__`` aggregate is provided to filter the known attributes of the ``Compound`` subclass to just the
+assigned validators.  A generator property named ``_validators`` is provided to merge the two sources.
 
 The purpose of this type of validator is to give you additional control over how multiple validators are run against a
 single value, and how validators are run against collections (such as lists and dictionaries).
@@ -318,32 +344,34 @@ single value, and how validators are run against collections (such as lists and 
 * ``All`` — Ensure all validators pass, but stop processing on the first failure.  Does not gather failures.
 * ``Pipe`` — Execute all validators and only declare success if all pass.  Gathers failures together.
 * ``Iterable`` — Value must be an iterable whose elements pass validation using the base scheme defined by ``require``,
-  generally one of Any, All, or Pipe.  (The class, not an instance of the class.)
-* ``Mapping`` — Value must be a mapping (dict-like) whose values non-recursively validate using the base scheme
-  defined by ``require``.
+  generally one of ``Any``, ``All``, or ``Pipe``, but may be recursive.  (The class, not an instance of the class, or
+  a ``functools.partial``-wrapped class for recursive use.)
+* ``Mapping`` — Value must be a mapping (``dict``-like) whose values non-recursively validate using the base scheme
+  defined by ``require``.  As per ``Iterable``, you can use ``functools.partial`` to build recursive compound
+  validators.
 
 4.5. Date and Time Validators
 -----------------------------
 
-* ``Date`` — A Range filter that only accepts datetime and date instances.
-* ``Time`` — A Range filter that only accepts datetime and time instances.
-* ``DateTime`` — A Range filter that only accepts datetime instances.
-* ``Delta`` — A Range filter that only accepts timedelta instances.
+* ``Date`` — A ``Range`` filter that only accepts datetime and date instances.
+* ``Time`` — A ``Range`` filter that only accepts datetime and time instances.
+* ``DateTime`` — A ``Range`` filter that only accepts datetime instances.
+* ``Delta`` — A ``Range`` filter that only accepts timedelta instances.
 
 4.6. Geographic Validators
 --------------------------
 
 All have singletons using the all-lower-case name.
 
-* ``Latitude`` — A compound validator ensuring the value is a number between -90 and 90 (degrees).
-* ``Longitude`` — A compound validator ensuring the value is a number between -180 and 180 (degrees).
-* ``Position`` — A compound validator ensuring the value is a sequence of length two whose first element is a valid
+* ``Latitude`` — A ``Compound`` validator ensuring the value is a number between -90 and 90 (degrees).
+* ``Longitude`` — A ``Compound`` validator ensuring the value is a number between -180 and 180 (degrees).
+* ``Position`` — A ``Compound`` validator ensuring the value is a sequence of length two whose first element is a valid
   latitude and whose second element is a valid longitude.
 
 4.7. Network-Related Validators
 -------------------------------
 
-All have singletons using the all-lower-case name.
+All have singletons using the all-lower-case name.  All are ``Pattern`` validators.
 
 * ``IPv4`` — IPv4 dot-notation address.
 * ``IPv4`` — IPv6 dot-notation address.
@@ -359,7 +387,8 @@ All have singletons using the all-lower-case name.
 4.8. Regular Expression Pattern Validators
 ------------------------------------------
 
-These were not more specific to another task.  All have singletons using the all-lower-case name.
+These were not more specific to another task.  All are ``Pattern`` validators.  All have singletons using the
+all-lower-case name.
 
 * ``Alphanumeric`` — Case-insensitive letters and numbers.
 * ``Username`` — Simple username validator: leading character must be alphabetical, subsequent characters may be alphanumeric, hyphen, period, or underscore.
@@ -375,11 +404,12 @@ These were not more specific to another task.  All have singletons using the all
 4.9. Utilities
 --------------
 
-* ``marrow.schema.validation:Validated`` — A mix-in for Attribute subclasses that performs
-  validation on any attempt to assign a value.  Not useful by itself.
-* ``marrow.schema.validation.util:SliceAttribute`` — Enforce a typecasting to a slice() instance by consuming
+* ``marrow.schema.validation:Validated`` — A mix-in for ``Attribute`` subclasses that performs validation on any
+  attempt to assign a value.  Not useful by itself.
+* ``marrow.schema.validation.util:SliceAttribute`` — Enforce a typecasting to a ``slice()`` instance by consuming
   iterables.
-* ``marrow.schema.validation.util:RegexAttribute`` — Automatically attempt to ``re.compile`` objects that do not have a ``match`` method.
+* ``marrow.schema.validation.util:RegexAttribute`` — Automatically attempt to ``re.compile`` objects that do not have a
+  ``match`` method.
 
 4.9.1 Testing
 ~~~~~~~~~~~~~
