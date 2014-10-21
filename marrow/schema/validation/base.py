@@ -1,5 +1,9 @@
 # encoding: utf-8
 
+"""Marrow Schema base classes for data validation."""
+
+# ## Imports
+
 from __future__ import unicode_literals
 
 from re import compile
@@ -10,6 +14,8 @@ from ..util import ensure_tuple
 from .exc import Concern
 from .util import SliceAttribute, RegexAttribute
 
+
+# ## Class Definitions
 
 class Validator(Container):
 	"""Validate a value against one or more rules.
@@ -34,7 +40,7 @@ class Validator(Container):
 class Always(Validator):
 	"""Always pass validation.
 	
-	Primarily useful to replace other validators for debugging purposes.  You can easily do this at import time::
+	Primarily useful to replace other validators for debugging purposes.  You can easily do this at import time:
 	
 		from marrow.schema.validation import Always as AlwaysRequired
 	"""
@@ -372,6 +378,8 @@ class Unique(Validator):
 			raise Concern("Not all values are unique.")
 		
 		return value
+
+unique = Unique()
 
 
 class ValidatedAttribute(CallbackAttribute):
