@@ -150,6 +150,8 @@ You can extend this to support validation during instantiation, or to process ad
 3.3. DataAttribute
 ------------------
 
+Descriptor protocol support for Element subclasses.
+
 The base attribute class which implements the descriptor protocol, pulling the instance value of the attribute from
 the containing object's ``__data__`` dictionary.  If an attempt is made to read an attribute that does not have a
 corresponding value in the data dictionary an ``AttributeError`` will be raised.
@@ -157,8 +159,23 @@ corresponding value in the data dictionary an ``AttributeError`` will be raised.
 3.4. Attribute
 --------------
 
-A subclass of ``DataAttribute`` which adds the ability to re-name the ``__data__`` key (name) and define a default
-value.
+Re-naming, default value, and container support for data attributes.
+
+All "data" is stored in the container's ``__data__`` dictionary.  The key defaults to the Attribute's instance name
+and can be overridden, unlike DataAttribute, by passing a name as the first positional parameter, or as the
+``name`` keyword argument.
+
+May contain nested Element instances to define properties for your Attribute subclass declaratively.
+
+If ``assign`` is True and the default value is ever utilized, immediately pretend the default value was assigned to
+this attribute.  (Override this in subclasses.)
+
+3.5. CallbackAttribute
+----------------------
+
+An attribute that automatically executes the value upon retrieval, if a callable routine.
+
+Frequently used by validation, transformation, and object mapper systems.
 
 3.5. Attributes
 ---------------

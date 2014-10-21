@@ -51,7 +51,7 @@ def ensure_tuple(length, tuples):
 		elif l > length:
 			yield tuple(elem[:length])
 		
-		# If we're too short, pad the last element out.
+		# If we're too short, pad the *leading* element out.
 		elif l < length:
 			yield (elem[0], ) * (length - l) + tuple(elem)
 
