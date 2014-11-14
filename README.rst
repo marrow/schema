@@ -465,6 +465,12 @@ Version 1.1.0
 
 * **Expanded Travis coverage.**  Travis now runs the py26 and pypy3 test runners.
 
+Version 1.1.1
+-------------
+
+* Removal of diagnostic aides.
+
+
 6. License
 ==========
 
