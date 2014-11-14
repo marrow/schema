@@ -94,8 +94,6 @@ class Container(Element):
 					', '.join(unknown)
 				))
 		
-		__import__('pprint').pprint(result)
-		
 		return result
 
 
@@ -162,8 +160,6 @@ class Attribute(Container, DataAttribute):
 		# Re-map ``name`` to ``__name__`` in the keyword arguments, if present.
 		if 'name' in kw:
 			kw['__name__'] = kw.pop('name')
-		
-		__import__('pprint').pprint(kw)
 		
 		# Process arguments upstream.
 		super(Attribute, self).__init__(*args, **kw)
