@@ -5,7 +5,7 @@
 These are used by Marrow Schema's validation tests and is exported for use in your own.
 """
 
-from .base import Concern
+from ..exc import Concern
 
 
 class ValidationTest(object):

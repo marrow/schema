@@ -3,7 +3,7 @@
 from collections import Sequence
 from numbers import Number
 
-from .base import Concern, Validator, Length, Range, Instance
+from . import Validator, Length, Range, Instance
 from .compound import All
 
 

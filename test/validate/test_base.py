@@ -6,8 +6,8 @@ import re
 
 from marrow.schema import Attribute, Container
 from marrow.schema.compat import unicode
-from marrow.schema.validation.testing import ValidationTest
-from marrow.schema.validation.base import *
+from marrow.schema.validate.testing import ValidationTest
+from marrow.schema.validate.base import *
 
 
 class TestAlways(ValidationTest):

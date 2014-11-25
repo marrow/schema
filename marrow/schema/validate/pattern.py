@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from re import compile, U, I
 
-from .base import Pattern
+from . import Pattern
 
 
 class Alphanumeric(Pattern):

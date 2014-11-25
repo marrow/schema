@@ -2,7 +2,7 @@
 
 from datetime import datetime, date, time, timedelta
 
-from .base import Instance, Range
+from . import Instance, Range
 
 
 class Date(Instance, Range):

@@ -12,7 +12,7 @@ from .base import Concern, Validator
 
 
 class Primitive(Validator):
-	
+	pass
 
 
 

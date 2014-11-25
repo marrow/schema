@@ -1,7 +1,7 @@
 # encoding: utf-8
 
-from marrow.schema.validation.testing import ValidationTest
-from marrow.schema.validation.geo import latitude, longitude, position
+from marrow.schema.validate.testing import ValidationTest
+from marrow.schema.validate.geo import latitude, longitude, position
 
 
 class TestGeographicLatitude(ValidationTest):

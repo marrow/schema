@@ -4,8 +4,7 @@ from __future__ import unicode_literals
 
 import sys
 
-from .. import Attribute
-from .base import Transform
+from .base import Transform, Attribute
 
 
 if sys.version_info > (3, ):

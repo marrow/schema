@@ -1,7 +1,7 @@
 # encoding: utf-8
 
-from marrow.schema.validation.testing import ValidationTest
-from marrow.schema.validation.network import ipv4, ipv6, ipaddress, cidrv4, cidrv6, cidr, hostname, dnsname, mac, uri
+from marrow.schema.validate.testing import ValidationTest
+from marrow.schema.validate.network import ipv4, ipv6, ipaddress, cidrv4, cidrv6, cidr, hostname, dnsname, mac, uri
 
 
 class TestIPv4(ValidationTest):

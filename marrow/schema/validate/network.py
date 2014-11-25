@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from re import compile, I, U
 
-from .base import Validator, Pattern, Length
+from . import Validator, Pattern, Length
 from .compound import Any, All
 
 
