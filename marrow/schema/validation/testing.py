@@ -12,6 +12,7 @@ class ValidationTest(object):
 	validator = None
 	valid = ()
 	invalid = ()
+	binary = False
 	
 	def test_values(self):
 		for value in self.valid:
@@ -21,7 +22,10 @@ class ValidationTest(object):
 			yield self._do_invalid, value
 	
 	def _do_valid(self, value):
-		assert self.validator(value) == value
+		if self.binary and isinstance(value, tuple) and len(value) == 2:
+			assert self.validator(value[0]) == value[1]
+		else:
+			assert self.validator(value) == value
 	
 	def _do_invalid(self, value):  # pragma: no cover
 		try:

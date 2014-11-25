@@ -7,6 +7,7 @@ import sys
 from marrow.util.convert import boolean
 
 from .base import Transform, SimpleTransform, Attribute
+from ..validation.exc import Concern
 
 
 if sys.version_info > (3, ):
@@ -15,17 +16,20 @@ if sys.version_info > (3, ):
 
 
 class BooleanTransform(Transform):
-	true = Attribute(default=('yes', 'y', 'on', 'true', 't', '1'))
-	false = Attribute(default=('no', 'n', 'off', 'false', 'f', '0'))
+	use = Attribute(default=0)  # Which of the pairs to use for the "foreign" side.
+	true = Attribute(default=(True, 'yes', 'y', 'on', 'true', 't', '1'))
+	false = Attribute(default=(False, 'no', 'n', 'off', 'false', 'f', '0'))
 	
-	def __call__(self, value):
+	def foreign(self, value, context=None):
+		use = self.use
+		
 		try:
-			return True if value.strip() else False
+			return self.true[use] if value.strip() else self.false[use]
 		except AttributeError:
-			return True if bool(value) else False
+			return self.true[use] if bool(value) else self.false[use]
 	
-	def native(self, value):
-		value = super(BooleanTransform, self).native(value)
+	def native(self, value, context=None):
+		value = super(BooleanTransform, self).native(value, context)
 		
 		try:
 			value = value.strip().lower()
@@ -38,7 +42,7 @@ class BooleanTransform(Transform):
 		if value in self.false:
 			return False
 		
-		raise ValueError("Unable to convert {0!r} to a boolean value.".format(value))
+		raise Concern("Unable to convert {0!r} to a boolean value.", value)
 
 boolean = BooleanTransform()
 
