@@ -3,9 +3,8 @@
 from collections import Sequence
 from numbers import Number
 
-from .base import Validator, Length, Range, Instance
+from .base import Concern, Validator, Length, Range, Instance
 from .compound import All
-from .exc import Concern
 
 
 class Latitude(All):

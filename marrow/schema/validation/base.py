@@ -10,8 +10,8 @@ from re import compile
 from numbers import Number
 
 from .. import Container, Attribute, CallbackAttribute
+from ..exc import Concern
 from ..util import ensure_tuple
-from .exc import Concern
 from .util import SliceAttribute, RegexAttribute
 
 
