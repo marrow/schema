@@ -6,7 +6,7 @@ from functools import partial
 from random import choice, randrange
 from string import ascii_letters as letters, digits, punctuation, whitespace
 
-from marrow.schema.validate.testing import ValidationTest
+from marrow.schema.testing import ValidationTest
 from marrow.schema.validate.pattern import alphanumeric, username, twitterusername, facebookusername, creditcard, hexcolor, alphahexcolor, isbn, slug, uuid
 
 

@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 
 from marrow.schema.compat import native, unicode, StringIO
 from marrow.schema.exc import Concern
+from marrow.schema.testing import ValidationTest
+
 from marrow.schema.transform.base import BaseTransform, Transform, IngressTransform, EgressTransform, SplitTransform
-from marrow.schema.validate.testing import ValidationTest
 
 
 PASSTHROUGH = (None, False, True, "", "Foo", 27, 42.0, [], {})
