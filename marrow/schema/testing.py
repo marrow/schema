@@ -34,3 +34,12 @@ class ValidationTest(object):
 			pass
 		else:
 			assert False, "Failed to raise a Concern: " + repr(value)
+
+
+class TransformTest(ValidationTest):
+	transform = None
+	binary = True
+	
+	@property
+	def validator(self):
+		return self.transform
