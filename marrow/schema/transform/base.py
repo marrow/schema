@@ -67,11 +67,15 @@ class Transform(BaseTransform):
 	"""The base transformer implementation.
 	
 	Like validation, may raise Concern on invalid input data.  The role of a transformer, though, is to expend
-	Best Effort to transform values to and from a foreign format.
+	Best Effort to transform values to and from a foreign format.  This base class defines two attributes:
+	
+	* ``encoding`` The encoding to use during any encoding/decoding that is required. (Default: ``utf-8``) 
+	* ``strip`` Should string values be stripped of leading and trailing whitespace?  (Default: ``True``)
 	
 	Transformers should operate bi-directionally wherever possible.
 	"""
 	
+	none = Attribute(default=False)  # Handle processing of empty string values into None values.
 	encoding = Attribute(default='utf-8')  # Specify None to disable str-to-unicode conversion.
 	strip = Attribute(default=True)  # Specify False to disable automatic text stripping.
 	
@@ -80,6 +84,9 @@ class Transform(BaseTransform):
 		
 		if self.strip and hasattr(value, 'strip'):
 			value = value.strip()
+		
+		if self.none and value == '':
+			return None
 		
 		if self.encoding and isinstance(value, str):
 			return value.decode(self.encoding)

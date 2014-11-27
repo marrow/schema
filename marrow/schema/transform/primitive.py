@@ -2,16 +2,11 @@
 
 from __future__ import unicode_literals
 
-import sys
-import copy
-
-from logging import ERROR
-
-from .. import Attribute, Attributes
-from .base import Concern, Validator
+from ..compat import unicode
+from .base import Concern, Transform, Attribute
 
 
-class Primitive(Validator):
+class Primitive(Transform):
 	pass
 
 
@@ -21,15 +16,11 @@ class Primitive(Validator):
 
 Primitive
 
-Boolean
-
 VInteger (min/max)
 VFloat (min/max)
 
 Decimal (min/max)
 Complex
-
-VNumber = any(Integer, Float, Decimal, …)
 
 String
 Binary
