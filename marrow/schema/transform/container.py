@@ -2,69 +2,77 @@
 
 from __future__ import unicode_literals
 
-import sys
-
-from .base import Transform, Attribute
-
-
-if sys.version_info > (3, ):
-	unicode = str
-	str = bytes
+from ..compat import unicode
+from .base import Concern, Transform, Attribute
 
 
-class ArrayTransform(Transform):
-	separator = Attribute(defualt=',')
-	empty = Attribute(default=False)  # Allow empty items?
+class Array(Transform):
+	"""Convert array-like values.
 	
-	def __call__(self, value):
-		if not value:
-			return ''
-		
-		return self.separator.join(value)
+	Intelligently handles list and non-string values, returning as-is and passing to the list builtin respectively.
 	
-	def native(self, value):
-		if not value or (haattr(value, 'strip') and not value.strip()):
-			return []
-		
-		if isinstance(value, list) or not isinstance(value, (str, unicode)):
-			if not self.empty:
-				return [i for i in value if i]
-			
-			return value
-		
-		if not strip:
-			if not empty:
-				return [i for i in value.split(self.separator) if i]
-			
-			return value.split(self.separator)
-		
-		if not empty:
-			return [i for i in [i.strip() for i in value.split(self.separator)] if i]
-		
-		return [i.strip() for i in value.split(separator)]
-
-array = ArrayTransform()
-
-
-class KeywordTransform(Transform):
-	processor = Attribute(default=KeywordProcessor(', \t\n', normalize=lambda s: s.strip('" \t\n')))
+	For a more advanced method of converting between strings and iterables see the Token transformer.
 	
-	def __call__(self, value):
-		if value is None:
-			return ''
-		
-		value = list(value)
-		
-		return self.processor.join(value)
+	With the provided defaults (comma separator, exclusion of empty elements, stripping of whitespace, and casting to
+	a list) the following example applies::
 	
-	def native(self, value):
-		value = super(ListTransform, self).native(value)
+		"foo,bar, baz   , , diz" -> ['foo', 'bar', 'baz', 'diz'] -> "foo,bar,baz,diz"
+	"""
+	
+	separator = Attribute(default=', ')
+	empty = Attribute(default=False)  # allow elements that appear 'empty' to be included
+	cast = Attribute(default=list)  # return native results as an instance of this, None for a lazy generator
+	
+	def _clean(self, value):
+		"""Perform a standardized pipline of operations across an iterable."""
+		
+		value = (unicode(v) for v in value)
+		
+		if self.strip:
+			value = (v.strip() for v in value)
+		
+		if not self.empty:
+			value = (v for v in value if v)
+		
+		return value
+	
+	def native(self, value, context=None):
+		"""Convert the given string into a list of substrings."""
+		
+		separator = self.separator.strip() if self.strip and hasattr(self.separator, 'strip') else self.separator
+		value = super(Array, self).native(value, context)
 		
 		if value is None:
-			return value
+			return self.cast()
 		
-		return self.processor(value)
+		if hasattr(value, 'split'):
+			value = value.split(separator)
+		
+		value = self._clean(value)
+		
+		try:
+			return self.cast(value) if self.cast else value
+		except Exception as e:
+			raise Concern("{0} caught, failed to perform array transform: {1}", e.__class__.__name__, unicode(e))
+	
+	def foreign(self, value, context=None):
+		"""Construct a string-like representation for an iterable of string-like objects."""
+		
+		if self.separator is None:
+			separator = ' '
+		else:
+			separator = self.separator.strip() if self.strip and hasattr(self.separator, 'strip') else self.separator
+		
+		value = self._clean(value)
+		
+		try:
+			value = separator.join(value)
+		except Exception as e:
+			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, unicode(e))
+		
+		return super(Array, self).foreign(value)
+		
+		array = Array()
 
+array = Array()
 
-class TagsTransform(ListTransform):
-	processor = Attribute(default=KeywordProcessor(' \t,', normalize=lambda s: s.lower().strip('" \t\n'), result=set))

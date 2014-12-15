@@ -104,7 +104,7 @@ class IngressTransform(Transform):
 	
 	For example::
 	
-		integer = SimpleTransform(ingress=int)
+		integer = IngressTransform(ingress=int)
 	
 	Useful in conjunction with SplitTransform to produce simple custom (de)serializers.
 	"""

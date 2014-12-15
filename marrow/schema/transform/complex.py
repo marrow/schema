@@ -2,161 +2,148 @@
 
 from __future__ import unicode_literals
 
+import re
+from inspect import isroutine
+
 from ..compat import unicode
-from .base import Concern, Transform, Attribute
+from .base import Concern, Transform, DataAttribute, Attribute
 
 
-class Boolean(Transform):
-	"""Convert boolean values.
+class TokenPatternAttribute(DataAttribute):
+	"""Lazy construction of the regular expression needed for token processing."""
 	
-	Intelligently handles boolean and non-string values, returning as-is and passing to the bool builtin resspectively.
-	
-	This process is case-insensitive.  Acceptable values:
-	
-	Truthy:
-	
-	* true
-	* t
-	* yes
-	* y
-	* on
-	* 1
-	
-	Falsy:
-	
-	* false
-	* f
-	* no
-	* n
-	* off
-	* 0
-	
-	These default lists can be overridden with the ``truthy`` and ``falsy`` attributes.  When converting native values
-	to foreign ones, the first value in the truthy/falsy lists is used based on the truthiness of the value; if you
-	wish to restrict to only actual boolean values combine this with a validator.
-	"""
-	
-	none = Attribute(default=True)
-	truthy = Attribute(default=('true', 't', 'yes', 'y', 'on', '1'))
-	falsy = Attribute(default=('false', 'f', 'no', 'n', 'off', '0'))
-	
-	def native(self, value, context=None):
-		"""Convert a foreign value to a native boolean."""
+	def __get__(self, obj, cls=None):
+		# If this is class attribute (and not instance attribute) access, we return ourselves.
+		if obj is None:
+			return self
 		
-		value = super(Boolean, self).native(value, context)
-		
-		if self.none and (value is None):
-			return None
-		
+		# Attempt to retrieve the cached value from the warehouse.
 		try:
-			value = value.lower()
-		except AttributeError:
-			return bool(value)
+			return obj.__data__[self.__name__]
+		except KeyError:
+			pass
 		
-		if value in self.truthy:
-			return True
+		# No stored value?  No problem!  Let's calculate it.
 		
-		if value in self.falsy:
-			return False
+		separators = obj.separators
+		groups = obj.groups
+		quotes = obj.quotes
 		
-		raise Concern("Unable to convert {0!r} to a boolean value.", value)
-	
-	def foreign(self, value, context=None):
-		"""Convert a native value to a textual boolean."""
+		if groups and None not in groups:
+			groups = [None] + list(groups)
 		
-		if self.none and value is None:
-			return ''
+		expression = ''.join((
+				# Trap possible leading space or separators.
+				('[\s%s]*' % (''.join(separators), )),
+				'(',
+					# Pass groups=('+','-') to handle optional leading + or -.
+					('[%s]%s' % (''.join([i for i in list(groups) if i is not None]), '?' if None in groups else '')) if groups else '',
+					# Match any amount of text (that isn't a quote) inside quotes.
+					''.join([(r'%s[^%s]+%s|' % (i, i, i)) for i in quotes]) if quotes else '',
+					# Match any amount of text that isn't whitespace.
+					('[^%s]+' % (''.join(separators), )),
+				')',
+				# Match possible separator character.
+				('[%s]*' % (''.join(separators), )),
+			))
 		
-		try:
-			value = self.native(value, context)
-		except Concern:
-			# The value might not be in the lists; bool() evaluate it instead.
-			value = bool(value.strip() if self.strip and hasattr(value, 'strip') else value)
+		value = (expression, re.compile(expression))
 		
-		if value in self.truthy or value:
-			return self.truthy[0]
-		
-		return self.falsy[0]
-
-boolean = Boolean()
-
-
-class Array(Transform):
-	"""Convert array-like values.
-	
-	Intelligently handles list and non-string values, returning as-is and passing to the list builtin respectively.
-	
-	For a more advanced method of converting between strings and iterables see the Token transformer.
-	
-	With the provided defaults (comma separator, exclusion of empty elements, stripping of whitespace, and casting to
-	a list) the following example applies::
-	
-		"foo,bar, baz   , , diz" -> ['foo', 'bar', 'baz', 'diz'] -> "foo,bar,baz,diz"
-	"""
-	
-	separator = Attribute(default=', ')
-	empty = Attribute(default=False)  # allow elements that appear 'empty' to be included
-	cast = Attribute(default=list)  # return native results as an instance of this, None for a lazy generator
-	
-	def _clean(self, value):
-		"""Perform a standardized pipline of operations across an iterable."""
-		
-		value = (unicode(v) for v in value)
-		
-		if self.strip:
-			value = (v.strip() for v in value)
-		
-		if not self.empty:
-			value = (v for v in value if v)
+		self.__set__(obj, value)
 		
 		return value
-	
-	def native(self, value, context=None):
-		"""Convert the given string into a list of substrings."""
-		
-		separator = self.separator.strip() if self.strip and hasattr(self.separator, 'strip') else self.separator
-		value = super(Array, self).native(value, context)
-		
-		if value is None:
-			return self.cast()
-		
-		if hasattr(value, 'split'):
-			value = value.split(separator)
-		
-		value = self._clean(value)
-		
-		try:
-			return self.cast(value) if self.cast else value
-		except Exception as e:
-			raise Concern("{0} caught, failed to perform array transform: {1}", e.__class__.__name__, unicode(e))
-	
-	def foreign(self, value, context=None):
-		"""Construct a string-like representation for an iterable of string-like objects."""
-		
-		if self.separator is None:
-			separator = ' '
-		else:
-			separator = self.separator.strip() if self.strip and hasattr(self.separator, 'strip') else self.separator
-		
-		value = self._clean(value)
-		
-		try:
-			value = separator.join(value)
-		except Exception as e:
-			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, unicode(e))
-		
-		return super(Array, self).foreign(value)
-
-array = Array()
-
-
-class Number(Transform):
-	pass
 
 
 class Token(Transform):
-	pass
+	separators = Attribute(default=' \t')
+	quotes = Attribute(default="\"'")
+	groups = Attribute(default=[])
+	group = Attribute(default=None)  # None or 'dict' or some other handler.
+	normalize = Attribute(default=None)
+	sort = Attribute(default=False)
+	cast = Attribute(default=list)
+	
+	pattern = TokenPatternAttribute()
+	
+	def native(self, value, context=None):
+		value = super(Token, self).native(value, context)
+		
+		if value is None:
+			return None
+		
+		pattern, regex = self.pattern
+		matches = regex.findall(value)
+		
+		if isroutine(self.normalize):
+			matches = [self.normalize(i) for i in matches]
+		
+		if self.sort:
+			matches.sort()
+		
+		if not self.groups:
+			return self.cast(matches)
+		
+		groups = dict([(i, list()) for i in self.groups])
+		if None not in groups:
+			groups[None] = list() # To prevent errors.
+		
+		for i in matches:
+			if i[0] in self.groups:
+				groups[i[0]].append(i[1:])
+			else:
+				groups[None].append(i)
+		
+		if self.group is dict:
+			return groups
+		
+		if not self.group:
+			results = []
+			
+			for group in self.groups:
+				results.extend([(group, match) for match in groups[group]])
+			
+			return self.cast(results)
+		
+		return self.group([[match for match in groups[group]] for group in self.groups])
+	
+	def foreign(self, value, context=None):
+		value = super(Token, self).foreign(value, context)
+		
+		if value is None:
+			return None
+		
+		def sanatize(keyword):
+			if not self.quotes:
+				return keyword
+			
+			for sep in self.separators:
+				if sep in keyword:
+					return self.quotes[0] + keyword + self.quotes[0]
+			
+			return keyword
+		
+		if self.group is dict:
+			if not isinstance(value, dict):
+				raise Concern("Dictionary grouped values must be passed as a dictionary.") # pragma: no cover
+			
+			return self.separators[0].join([(prefix + sanatize(keyword)) for prefix, keywords in value for keyword in value[prefix]])
+		
+		if not isinstance(value, (list, tuple, set)):
+			raise Concern("Ungrouped values must be passed as a list, tuple, or set.")
+		
+		value = [sanatize(keyword) for keyword in value]
+		
+		return self.separators[0].join(sorted(value) if self.sort else value)
 
+
+# A lowercase-normalized ungrouped tag set processor, returning only unique tags.
+tags = Token(separators=' \t,', normalize=lambda s: s.lower().strip('"'), cast=set)
+
+# A tag search; as per tags but grouped into a dictionary of sets for normal (None), forced inclusion (+) or exclusion (-).
+tag_search = Token(separators=' \t,', normalize=lambda s: s.lower().strip('"'), cast=set, groups=['+', '-'], group=dict)
+
+# A search keyword processor which retains quotes and groups into a dictionary of lists; no normalization is applied.
+terms = Token(groups=['+', '-'], group=dict)
 
 
 # VETO: Extract

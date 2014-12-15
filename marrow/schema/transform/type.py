@@ -2,52 +2,70 @@
 
 from __future__ import unicode_literals
 
-import sys
+from decimal import Decimal as DecimalType
 
-from marrow.util.convert import boolean
-
-from .base import Transform, SimpleTransform, Attribute
-from ..validation.exc import Concern
+from ..compat import unicode
+from .base import Concern, Transform, Attribute, CallbackTransform
 
 
-if sys.version_info > (3, ):
-	unicode = str
-	str = bytes
-
-
-class BooleanTransform(Transform):
-	use = Attribute(default=0)  # Which of the pairs to use for the "foreign" side.
-	true = Attribute(default=(True, 'yes', 'y', 'on', 'true', 't', '1'))
-	false = Attribute(default=(False, 'no', 'n', 'off', 'false', 'f', '0'))
+class Boolean(Transform):
+	"""Convert boolean values.
 	
-	def foreign(self, value, context=None):
-		use = self.use
-		
-		try:
-			return self.true[use] if value.strip() else self.false[use]
-		except AttributeError:
-			return self.true[use] if bool(value) else self.false[use]
+	Intelligently handles boolean and non-string values, returning as-is and passing to the bool builtin resspectively.
+	
+	This process is case-insensitive.  Acceptable values:
+	
+	Truthy: true, t, yes, y, on, 1, literal True
+	Falsy: false, f, no, n, off, 0, literal False
+	"""
+	
+	use = Attribute(default=0)  # Which of the pairs to use for the "foreign" side.
+	none = Attribute(default=True)
+	truthy = Attribute(default=('true', 't', 'yes', 'y', 'on', '1', True))
+	falsy = Attribute(default=('false', 'f', 'no', 'n', 'off', '0', False))
 	
 	def native(self, value, context=None):
-		value = super(BooleanTransform, self).native(value, context)
+		"""Convert a foreign value to a native boolean."""
+		
+		value = super(Boolean, self).native(value, context)
+		
+		if self.none and (value is None):
+			return None
 		
 		try:
-			value = value.strip().lower()
+			value = value.lower()
 		except AttributeError:
-			return bool(input)
+			return bool(value)
 		
-		if value in self.true:
+		if value in self.truthy:
 			return True
 		
-		if value in self.false:
+		if value in self.falsy:
 			return False
 		
 		raise Concern("Unable to convert {0!r} to a boolean value.", value)
+	
+	def foreign(self, value, context=None):
+		"""Convert a native value to a textual boolean."""
+		
+		if self.none and value is None:
+			return ''
+		
+		try:
+			value = self.native(value, context)
+		except Concern:
+			# The value might not be in the lists; bool() evaluate it instead.
+			value = bool(value.strip() if self.strip and hasattr(value, 'strip') else value)
+		
+		if value in self.truthy or value:
+			return self.truthy[self.use]
+		
+		return self.falsy[self.use]
 
-boolean = BooleanTransform()
+boolean = Boolean()
 
 
-class BooleanWebTransform(BooleanTransform):
+class WebBoolean(Boolean):
 	"""Some web frameworks and widget systems handle checkboxes by having a hidden form field and a checkbox.
 	
 	If the checkbox is unchecked, you get the "default" value as the only value.  If the checkbox is checked, you end
@@ -55,20 +73,48 @@ class BooleanWebTransform(BooleanTransform):
 	take the last value defined.
 	"""
 	
-	def native(self, value):
-		return super(BooleanWebTransform, self).native(value[0] if isinstance(value, (list, tuple)) else value)
+	none = Attribute(default=False)
+	use = Attribute(default=-1)
+	falsy = Attribute(default=('', 'false', 'f', 'no', 'n', 'off', '0', False))
+	
+	def native(self, value, context=None):
+		if isinstance(value, (tuple, list)):
+			value = value[-1]
+		
+		return super(WebBoolean, self).native(value, context)
+
+web_boolean = WebBoolean()
 
 
-class IntegerTransform(SimpleTransform):
-	type = int
+class Integer(CallbackTransform):
+	ingress = int
+	egress = unicode
+
+integer = Integer()
 
 
-class FloatTransform(SimpleTransform):
-	type = float
+class Decimal(CallbackTransform):
+	ingress = DecimalType
+	egress = unicode
+
+decimal = Decimal()
 
 
-class NumberTransform(ChainTransform):
-	integer = IntegerTransform()
-	floating = FloatTransform()
+class Number(CallbackTransform):
+	egress = unicode
+	
+	@staticmethod
+	def ingress(value):
+		try:
+			return int(value)
+		except (TypeError, ValueError):
+			pass
+		
+		try:
+			return float(value)
+		except (TypeError, ValueError):
+			pass
+		
+		raise Concern("Unable to convert {0!r} to a number.", value)
 
-number = NumberTransform()
+number = Number()

@@ -6,7 +6,7 @@ Marrow Schema
 
 ..
 
-    https://github.com/marrow/marrow.schema
+    https://github.com/marrow/schema
 
 ..
 
@@ -80,19 +80,19 @@ side-effects when updating.  Use ``marrow.schema<1.2`` to get all bugfixes for t
     |developstatus| |developcover|
 
 Development takes place on `GitHub <https://github.com/>`_ in the
-`marrow.schema <https://github.com/marrow/marrow.schema/>`_ project.  Issue tracking, documentation, and downloads
+`marrow/schema <https://github.com/marrow/schema/>`_ project.  Issue tracking, documentation, and downloads
 are provided there.
 
 Installing the current development version requires `Git <http://git-scm.com/>`_, a distributed source code management
 system.  If you have Git you can run the following to download and *link* the development version into your Python
 runtime::
 
-    git clone https://github.com/marrow/marrow.schema.git
-    (cd marrow.schema; python setup.py develop)
+    git clone https://github.com/marrow/schema.git
+    (cd schema; python setup.py develop)
 
 You can then upgrade to the latest version at any time::
 
-    (cd marrow.schema; git pull; python setup.py develop)
+    (cd schema; git pull; python setup.py develop)
 
 If you would like to make changes and contribute them back to the project, fork the GitHub project, make your changes,
 and submit a pull request.  This process is beyond the scope of this documentation; for more information see
@@ -495,32 +495,32 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-.. |masterstatus| image:: http://img.shields.io/travis/marrow/marrow.schema/master.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
+.. |masterstatus| image:: http://img.shields.io/travis/marrow/schema/master.svg?style=flat
+    :target: https://travis-ci.org/marrow/schema
     :alt: Release Build Status
 
-.. |developstatus| image:: http://img.shields.io/travis/marrow/marrow.schema/develop.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
+.. |developstatus| image:: http://img.shields.io/travis/marrow/schema/develop.svg?style=flat
+    :target: https://travis-ci.org/marrow/schema
     :alt: Development Build Status
 
-.. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
-    :target: https://pypi.python.org/pypi/marrow.schema
+.. |latestversion| image:: http://img.shields.io/pypi/v/schema.svg?style=flat
+    :target: https://pypi.python.org/pypi/schema
     :alt: Latest Version
 
-.. |downloads| image:: http://img.shields.io/pypi/dw/marrow.schema.svg?style=flat
-    :target: https://pypi.python.org/pypi/marrow.schema
+.. |downloads| image:: http://img.shields.io/pypi/dw/schema.svg?style=flat
+    :target: https://pypi.python.org/pypi/schema
     :alt: Downloads per Week
 
-.. |mastercover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/master.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
+.. |mastercover| image:: http://img.shields.io/coveralls/marrow/schema/master.svg?style=flat
+    :target: https://travis-ci.org/marrow/schema
     :alt: Release Test Coverage
 
-.. |developcover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/develop.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
+.. |developcover| image:: http://img.shields.io/coveralls/marrow/schema/develop.svg?style=flat
+    :target: https://travis-ci.org/marrow/schema
     :alt: Development Test Coverage
 
-.. |issuecount| image:: http://img.shields.io/github/issues/marrow/marrow.schema.svg?style=flat
-    :target: https://github.com/marrow/marrow.schema/issues
+.. |issuecount| image:: http://img.shields.io/github/issues/marrow/schema.svg?style=flat
+    :target: https://github.com/marrow/schema/issues
     :alt: Github Issues
 
 .. |cake| image:: http://img.shields.io/badge/cake-lie-1b87fb.svg?style=flat
