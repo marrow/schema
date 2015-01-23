@@ -503,11 +503,11 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     :target: https://travis-ci.org/marrow/schema
     :alt: Development Build Status
 
-.. |latestversion| image:: http://img.shields.io/pypi/v/schema.svg?style=flat
+.. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
     :target: https://pypi.python.org/pypi/schema
     :alt: Latest Version
 
-.. |downloads| image:: http://img.shields.io/pypi/dw/schema.svg?style=flat
+.. |downloads| image:: http://img.shields.io/pypi/dw/marrow.schema.svg?style=flat
     :target: https://pypi.python.org/pypi/schema
     :alt: Downloads per Week
 
