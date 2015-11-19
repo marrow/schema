@@ -14,7 +14,7 @@ class Transform(object):
 
 
 class Widget(DataAttribute):
-    title = DataAttribute(defualt=None)
+    title = DataAttribute(default=None)
     
     transform = DataAttribute(default=Transform())
 
