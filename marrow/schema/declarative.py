@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 
 from warnings import warn
 from inspect import isroutine
+from collections import OrderedDict as odict
 from .meta import Element
 
 
@@ -28,6 +29,8 @@ class Container(Element):
 	  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to ``_data`` from MongoEngine.
 	"""
 	
+	__store__ = dict
+	
 	def __init__(self, *args, **kw):
 		"""Process arguments and assign values to instance attributes at class instantiation time.
 		
@@ -44,7 +47,7 @@ class Container(Element):
 		arguments = self._process_arguments(args, kw)
 		
 		# Prepare the attribute value warehouse for this instance.
-		self.__data__ = dict()
+		self.__data__ = self.__store__()
 		
 		# Assign valid attributes.
 		for name, value in arguments.items():
