@@ -2,15 +2,15 @@
 Marrow Schema
 =============
 
-    © 2013-2014 Alice Bevan-McGregor and contributors.
+    © 2013-2016 Alice Bevan-McGregor and contributors.
 
 ..
 
-    https://github.com/marrow/marrow.schema
+    https://github.com/marrow/schema
 
 ..
 
-    |latestversion| |downloads| |masterstatus| |mastercover| |issuecount|
+    |latestversion| |ghtag| |downloads| |masterstatus| |mastercover| |masterreq| |ghwatch| |ghstar|
 
 1. What is Marrow Schema?
 =========================
@@ -70,29 +70,29 @@ developing using Python; installing things system-wide is yucky (for a variety o
 If you add ``marrow.schema`` to the ``install_requires`` argument of the call to ``setup()`` in your applicaiton's
 ``setup.py`` file, Marrow Schema will be automatically installed and made available when your own application or
 library is installed.  We recommend using "less than" version numbers to ensure there are no unintentional
-side-effects when updating.  Use ``marrow.schema<1.2`` to get all bugfixes for the current release, and
+side-effects when updating.  Use ``marrow.schema<1.3`` to get all bugfixes for the current release, and
 ``marrow.schema<2.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
 
 
 2.1. Development Version
 ------------------------
 
-    |developstatus| |developcover|
+    |developstatus| |developcover| |ghsince| |issuecount| |ghfork|
 
 Development takes place on `GitHub <https://github.com/>`_ in the
-`marrow.schema <https://github.com/marrow/marrow.schema/>`_ project.  Issue tracking, documentation, and downloads
+`marrow/schema <https://github.com/marrow/schema/>`_ project.  Issue tracking, documentation, and downloads
 are provided there.
 
 Installing the current development version requires `Git <http://git-scm.com/>`_, a distributed source code management
 system.  If you have Git you can run the following to download and *link* the development version into your Python
 runtime::
 
-    git clone https://github.com/marrow/marrow.schema.git
-    (cd marrow.schema; python setup.py develop)
+    git clone https://github.com/marrow/schema.git
+    (cd schema; python setup.py develop)
 
 You can then upgrade to the latest version at any time::
 
-    (cd marrow.schema; git pull; python setup.py develop)
+    (cd schema; git pull; python setup.py develop)
 
 If you would like to make changes and contribute them back to the project, fork the GitHub project, make your changes,
 and submit a pull request.  This process is beyond the scope of this documentation; for more information see
@@ -470,6 +470,18 @@ Version 1.1.1
 
 * Removal of diagnostic aides.
 
+Version 1.2.0
+-------------
+
+* Updated documentation sheilds and test coverage provider.
+
+* **Added tested data transformation tools.**
+
+* Attributes passed positionally or by name during ``Container`` initialization have their attribute order preserved
+  during assignment.
+
+* ``Container`` subclasses can now override the callable used to construct ``__data__`` on instances.
+
 
 6. License
 ==========
@@ -479,7 +491,7 @@ Marrow Schema has been released under the MIT Open Source license.
 6.1. The MIT License
 --------------------
 
-Copyright © 2013-2014 Alice Bevan-McGregor and contributors.
+Copyright © 2013-2016 Alice Bevan-McGregor and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the “Software”), to deal in the Software without restriction, including without limitation the
@@ -495,32 +507,60 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-.. |masterstatus| image:: http://img.shields.io/travis/marrow/marrow.schema/master.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
-    :alt: Release Build Status
+.. |ghwatch| image:: https://img.shields.io/github/watchers/marrow/schema.svg?style=social&label=Watch
+    :target: https://github.com/marrow/schema/subscription
+    :alt: Subscribe to project activity on Github.
 
-.. |developstatus| image:: http://img.shields.io/travis/marrow/marrow.schema/develop.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
-    :alt: Development Build Status
+.. |ghstar| image:: https://img.shields.io/github/stars/marrow/schema.svg?style=social&label=Star
+    :target: https://github.com/marrow/schema/subscription
+    :alt: Star this project on Github.
+
+.. |ghfork| image:: https://img.shields.io/github/forks/marrow/schema.svg?style=social&label=Fork
+    :target: https://github.com/marrow/schema/fork
+    :alt: Fork this project on Github.
+
+.. |masterstatus| image:: http://img.shields.io/travis/marrow/schema/master.svg?style=flat
+    :target: https://travis-ci.org/marrow/schema/branches
+    :alt: Release build status.
+
+.. |mastercover| image:: http://img.shields.io/codecov/c/github/marrow/schema/master.svg?style=flat
+    :target: https://codecov.io/github/marrow/schema?branch=master
+    :alt: Release test coverage.
+
+.. |masterreq| image:: https://img.shields.io/requires/github/marrow/schema.svg
+    :target: https://requires.io/github/marrow/schema/requirements/?branch=master
+    :alt: Status of release dependencies.
+
+.. |developstatus| image:: http://img.shields.io/travis/marrow/schema/develop.svg?style=flat
+    :target: https://travis-ci.org/marrow/schema/branches
+    :alt: Development build status.
+
+.. |developcover| image:: http://img.shields.io/codecov/c/github/marrow/schema/develop.svg?style=flat
+    :target: https://codecov.io/github/marrow/schema?branch=develop
+    :alt: Development test coverage.
+
+.. |developreq| image:: https://img.shields.io/requires/github/marrow/schema.svg
+    :target: https://requires.io/github/marrow/schema/requirements/?branch=develop
+    :alt: Status of development dependencies.
+
+.. |issuecount| image:: http://img.shields.io/github/issues-raw/marrow/schema.svg?style=flat
+    :target: https://github.com/marrow/schema/issues
+    :alt: Github Issues
+
+.. |ghsince| image:: https://img.shields.io/github/commits-since/marrow/schema/1.2.0.svg
+    :target: https://github.com/marrow/schema/commits/develop
+    :alt: Changes since last release.
+
+.. |ghtag| image:: https://img.shields.io/github/tag/marrow/schema.svg
+    :target: https://github.com/marrow/schema/tree/1.2.0
+    :alt: Latest Github tagged release.
 
 .. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
     :target: https://pypi.python.org/pypi/marrow.schema
-    :alt: Latest Version
+    :alt: Latest released version.
 
 .. |downloads| image:: http://img.shields.io/pypi/dw/marrow.schema.svg?style=flat
     :target: https://pypi.python.org/pypi/marrow.schema
-    :alt: Downloads per Week
-
-.. |mastercover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/master.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
-    :alt: Release Test Coverage
-
-.. |developcover| image:: http://img.shields.io/coveralls/marrow/marrow.schema/develop.svg?style=flat
-    :target: https://travis-ci.org/marrow/marrow.schema
-    :alt: Development Test Coverage
-
-.. |issuecount| image:: http://img.shields.io/github/issues/marrow/marrow.schema.svg?style=flat
-    :target: https://github.com/marrow/marrow.schema/issues
-    :alt: Github Issues
+    :alt: Downloads per week.
 
 .. |cake| image:: http://img.shields.io/badge/cake-lie-1b87fb.svg?style=flat

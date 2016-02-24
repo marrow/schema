@@ -7,7 +7,7 @@ import copy
 
 from logging import getLevelName, DEBUG, INFO, WARNING, ERROR, CRITICAL
 
-from ..compat import py3, unicode
+from .compat import py3, unicode
 
 
 class Concern(Exception):

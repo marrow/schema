@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 
 from warnings import warn
 from inspect import isroutine
+from collections import OrderedDict as odict, MutableMapping, deque
 from .meta import Element
 
 
@@ -28,6 +29,8 @@ class Container(Element):
 	  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to ``_data`` from MongoEngine.
 	"""
 	
+	__store__ = dict  # The callable used to produce a new self.__data__ instance. Should result in a MutableMapping.
+	
 	def __init__(self, *args, **kw):
 		"""Process arguments and assign values to instance attributes at class instantiation time.
 		
@@ -44,7 +47,9 @@ class Container(Element):
 		arguments = self._process_arguments(args, kw)
 		
 		# Prepare the attribute value warehouse for this instance.
-		self.__data__ = dict()
+		self.__data__ = self.__store__()
+		
+		assert isinstance(self.__data__, MutableMapping), "Data storage attribute __data__ must be a mutable mapping."
 		
 		# Assign valid attributes.
 		for name, value in arguments.items():
@@ -80,11 +85,20 @@ class Container(Element):
 					', '.join(duplicates)
 				))
 		
-		# Perform the final combination of positional and keyword arguments.
-		result = dict(kw, **dict((names[i], arg) for i, arg in enumerate(args)))
+		def field_values(args, kw):
+			"""A little closure to yield out fields and their assigned values in field order."""
+			
+			for i, arg in enumerate(self.__attributes__.keys()):
+				if len(args):
+					yield arg, args.popleft()
+				
+				if arg in kw:
+					yield arg, kw.pop(arg)
+		
+		result = odict(field_values(deque(args), dict(kw)))
 		
 		# Again use sets, this time to identify unknown keys.
-		unknown = set(result.keys()) - set(self.__attributes__.keys())
+		unknown = set(kw.keys()) - set(result.keys())
 		
 		# Given unknown keys, explode gloriously.
 		if unknown:

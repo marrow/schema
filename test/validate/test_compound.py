@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 import re
 
 from marrow.schema.compat import unicode
-from marrow.schema.validation.base import *
-from marrow.schema.validation.compound import *
-from marrow.schema.validation.testing import ValidationTest
+from marrow.schema.testing import ValidationTest
+from marrow.schema.validate.base import *
+from marrow.schema.validate.compound import *
 
 
 length = Length(slice(1, 21))

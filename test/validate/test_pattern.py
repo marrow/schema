@@ -6,8 +6,8 @@ from functools import partial
 from random import choice, randrange
 from string import ascii_letters as letters, digits, punctuation, whitespace
 
-from marrow.schema.validation.testing import ValidationTest
-from marrow.schema.validation.pattern import alphanumeric, username, twitterusername, facebookusername, creditcard, hexcolor, alphahexcolor, isbn, slug, uuid
+from marrow.schema.testing import ValidationTest
+from marrow.schema.validate.pattern import alphanumeric, username, twitterusername, facebookusername, creditcard, hexcolor, alphahexcolor, isbn, slug, uuid
 
 
 def rs(size=6, chars=letters + digits):

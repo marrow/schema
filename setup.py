@@ -13,8 +13,8 @@ except ImportError:
 from setuptools.command.test import test as TestCommand
 
 
-if sys.version_info < (2, 6):
-	raise SystemExit("Python 2.6 or later is required.")
+if sys.version_info < (2, 7):
+	raise SystemExit("Python 2.7 or later is required.")
 elif sys.version_info > (3, 0) and sys.version_info < (3, 2):
 	raise SystemExit("Python 3.2 or later is required.")
 
@@ -35,7 +35,7 @@ class PyTest(TestCommand):
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-tests_require = ['pytest', 'pytest-cov']
+tests_require = ['pytest', 'pytest-cov', 'pytest-spec', 'pytest-flakes']
 
 setup(
 	name = "marrow.schema",
@@ -57,10 +57,8 @@ setup(
 			"Operating System :: OS Independent",
 			"Programming Language :: Python",
 			"Programming Language :: Python :: 2",
-			"Programming Language :: Python :: 2.6",
 			"Programming Language :: Python :: 2.7",
 			"Programming Language :: Python :: 3",
-			"Programming Language :: Python :: 3.2",
 			"Programming Language :: Python :: 3.3",
 			"Programming Language :: Python :: 3.4",
 			"Programming Language :: Python :: Implementation :: CPython",
@@ -69,11 +67,12 @@ setup(
 			"Topic :: Utilities"
 		],
 	
-	packages = find_packages(exclude=['test', 'script', 'example']),
+	packages = find_packages(exclude=['test', 'example']),
 	include_package_data = True,
+	package_data = {'': ['README.rst', 'LICENSE.txt']},
 	namespace_packages = ['marrow'],
 	
-	install_requires = ['ordereddict'] if sys.version_info < (2, 7) else [],
+	install_requires = [],
 	
 	extras_require = dict(
 			development = tests_require,

@@ -1,9 +1,14 @@
 # encoding: utf-8
 
-from .exc import Concern
+from warnings import warn
 
-from .base import Validator, Callback, In, Contains, Length, Range, Pattern, Instance, Subclass, Equal
-from .base import Always, always, Never, never, Unique, unique
-from .base import AlwaysTruthy, truthy, Truthy, AlwaysFalsy, falsy, Falsy
-from .base import AlwaysRequired, required, Required, AlwaysMissing, missing, Missing
-from .base import Validated
+# Replicate the original imports available here.
+
+from ..validate import Validator, Callback, In, Contains, Length, Range, Pattern, Instance, Subclass, Equal
+from ..validate import Always, always, Never, never, Unique, unique
+from ..validate import AlwaysTruthy, truthy, Truthy, AlwaysFalsy, falsy, Falsy
+from ..validate import AlwaysRequired, required, Required, AlwaysMissing, missing, Missing
+from ..validate import Validated
+
+
+warn("This package has been re-named, import your modules from marrow.schema.validate instead.", DeprecationWarning)

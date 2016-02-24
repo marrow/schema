@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from marrow.schema.validation.exc import Concern, WARNING, ERROR, CRITICAL
+from marrow.schema.exc import Concern, WARNING, ERROR, CRITICAL
 from marrow.schema.compat import unicode
 
 
