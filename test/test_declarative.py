@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import pytest
+from collections import OrderedDict as odict
 
 from marrow.schema.declarative import Container, DataAttribute, Attribute, CallbackAttribute
 
@@ -42,6 +43,15 @@ class TestContainer:
 		instance = self.Sample(27, bar=42)
 		assert instance.foo == 27
 		assert instance.bar == 42
+	
+	def test_container_preserves_order(self):
+		class OurSample(self.Sample):
+			__store__ = odict
+		
+		assert list(OurSample(27, 42).__data__.keys()) == ['foo', 'bar']
+		assert list(OurSample(27, bar=42).__data__.keys()) == ['foo', 'bar']
+		assert list(OurSample(foo=27, bar=42).__data__.keys()) == ['foo', 'bar']
+		assert list(OurSample(bar=42, foo=27).__data__.keys()) == ['foo', 'bar']
 
 
 class TestDataAttribute:
