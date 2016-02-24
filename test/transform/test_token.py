@@ -45,6 +45,9 @@ class TestTagForeign(TransformTest):
 			(('high', 'altitude'), "high altitude"),
 			(('high', 'altitude', 'melting pandas'), 'high altitude "melting pandas"')
 		)
+	invalid = (
+			'',
+		)
 
 
 class TestTermsNative(TransformTest):
@@ -78,3 +81,27 @@ class TestTokenNoQuote(TransformTest):
 	valid = (
 			(("foo", "bar", "baz diz"), "foo bar baz diz"),
 		)
+
+class TestTokenDictionaryForeign(TransformTest):
+	transform = Token(group=dict, sort=True).foreign
+	valid = (
+			({'+': ('foo', 'bar'), '-': ('baz', )}, "+bar +foo -baz"),
+		)
+	invalid = (
+			'foo'
+		)
+	
+	'''
+		if self.group is dict:
+			if not isinstance(value, dict):
+				raise Concern("Dictionary grouped values must be passed as a dictionary.")
+			
+			return self.separators[0].join([(prefix + sanatize(keyword)) for prefix, keywords in value for keyword in value[prefix]])
+		
+		if not isinstance(value, (list, tuple, set)):
+			raise Concern("Ungrouped values must be passed as a list, tuple, or set.")
+		
+		value = [sanatize(keyword) for keyword in value]
+		
+		return self.separators[0].join(sorted(value) if self.sort else value)
+	'''

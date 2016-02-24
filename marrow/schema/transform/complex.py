@@ -124,9 +124,9 @@ class Token(Transform):
 		
 		if self.group is dict:
 			if not isinstance(value, dict):
-				raise Concern("Dictionary grouped values must be passed as a dictionary.") # pragma: no cover
+				raise Concern("Dictionary grouped values must be passed as a dictionary.")
 			
-			return self.separators[0].join([(prefix + sanatize(keyword)) for prefix, keywords in value for keyword in value[prefix]])
+			return self.separators[0].join([((prefix or '') + sanatize(keyword)) for prefix, keywords in sorted(list(value.items())) for keyword in sorted(value[prefix])])
 		
 		if not isinstance(value, (list, tuple, set)):
 			raise Concern("Ungrouped values must be passed as a list, tuple, or set.")

@@ -71,8 +71,6 @@ class Array(Transform):
 			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, unicode(e))
 		
 		return super(Array, self).foreign(value)
-		
-		array = Array()
+
 
 array = Array()
-

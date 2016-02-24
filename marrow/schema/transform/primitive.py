@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+raise ImportError("For future use.")
+
 from __future__ import unicode_literals
 
 from ..compat import unicode
