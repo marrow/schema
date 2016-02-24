@@ -70,7 +70,7 @@ developing using Python; installing things system-wide is yucky (for a variety o
 If you add ``marrow.schema`` to the ``install_requires`` argument of the call to ``setup()`` in your applicaiton's
 ``setup.py`` file, Marrow Schema will be automatically installed and made available when your own application or
 library is installed.  We recommend using "less than" version numbers to ensure there are no unintentional
-side-effects when updating.  Use ``marrow.schema<1.2`` to get all bugfixes for the current release, and
+side-effects when updating.  Use ``marrow.schema<1.3`` to get all bugfixes for the current release, and
 ``marrow.schema<2.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
 
 
@@ -470,6 +470,18 @@ Version 1.1.1
 
 * Removal of diagnostic aides.
 
+Version 1.2.0
+-------------
+
+* Updated documentation sheilds and test coverage provider.
+
+* **Added tested data transformation tools.**
+
+* Attributes passed positionally or by name during ``Container`` initialization have their attribute order preserved
+  during assignment.
+
+* ``Container`` subclasses can now override the callable used to construct ``__data__`` on instances.
+
 
 6. License
 ==========
@@ -535,12 +547,12 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     :target: https://github.com/marrow/schema/issues
     :alt: Github Issues
 
-.. |ghsince| image:: https://img.shields.io/github/commits-since/marrow/schema/1.1.1.svg
+.. |ghsince| image:: https://img.shields.io/github/commits-since/marrow/schema/1.2.0.svg
     :target: https://github.com/marrow/schema/commits/develop
     :alt: Changes since last release.
 
 .. |ghtag| image:: https://img.shields.io/github/tag/marrow/schema.svg
-    :target: https://github.com/marrow/schema/tree/1.1.1
+    :target: https://github.com/marrow/schema/tree/1.2.0
     :alt: Latest Github tagged release.
 
 .. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
