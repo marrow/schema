@@ -2,7 +2,7 @@
 Marrow Schema
 =============
 
-    © 2013-2015 Alice Bevan-McGregor and contributors.
+    © 2013-2016 Alice Bevan-McGregor and contributors.
 
 ..
 
@@ -10,7 +10,7 @@ Marrow Schema
 
 ..
 
-    |latestversion| |downloads| |masterstatus| |mastercover| |issuecount|
+    |latestversion| |ghtag| |downloads| |masterstatus| |mastercover| |masterreq| |ghwatch| |ghstar|
 
 1. What is Marrow Schema?
 =========================
@@ -77,7 +77,7 @@ side-effects when updating.  Use ``marrow.schema<1.2`` to get all bugfixes for t
 2.1. Development Version
 ------------------------
 
-    |developstatus| |developcover|
+    |developstatus| |developcover| |ghsince| |issuecount| |ghfork|
 
 Development takes place on `GitHub <https://github.com/>`_ in the
 `marrow/schema <https://github.com/marrow/schema/>`_ project.  Issue tracking, documentation, and downloads
@@ -479,7 +479,7 @@ Marrow Schema has been released under the MIT Open Source license.
 6.1. The MIT License
 --------------------
 
-Copyright © 2013-2015 Alice Bevan-McGregor and contributors.
+Copyright © 2013-2016 Alice Bevan-McGregor and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the “Software”), to deal in the Software without restriction, including without limitation the
@@ -495,32 +495,60 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+.. |ghwatch| image:: https://img.shields.io/github/watchers/marrow/schema.svg?style=social&label=Watch
+    :target: https://github.com/marrow/schema/subscription
+    :alt: Subscribe to project activity on Github.
+
+.. |ghstar| image:: https://img.shields.io/github/stars/marrow/schema.svg?style=social&label=Star
+    :target: https://github.com/marrow/schema/subscription
+    :alt: Star this project on Github.
+
+.. |ghfork| image:: https://img.shields.io/github/forks/marrow/schema.svg?style=social&label=Fork
+    :target: https://github.com/marrow/schema/fork
+    :alt: Fork this project on Github.
+
 .. |masterstatus| image:: http://img.shields.io/travis/marrow/schema/master.svg?style=flat
-    :target: https://travis-ci.org/marrow/schema
-    :alt: Release Build Status
+    :target: https://travis-ci.org/marrow/schema/branches
+    :alt: Release build status.
+
+.. |mastercover| image:: http://img.shields.io/codecov/c/github/marrow/schema/master.svg?style=flat
+    :target: https://codecov.io/github/marrow/schema?branch=master
+    :alt: Release test coverage.
+
+.. |masterreq| image:: https://img.shields.io/requires/github/marrow/schema.svg
+    :target: https://requires.io/github/marrow/schema/requirements/?branch=master
+    :alt: Status of release dependencies.
 
 .. |developstatus| image:: http://img.shields.io/travis/marrow/schema/develop.svg?style=flat
-    :target: https://travis-ci.org/marrow/schema
-    :alt: Development Build Status
+    :target: https://travis-ci.org/marrow/schema/branches
+    :alt: Development build status.
 
-.. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
-    :target: https://pypi.python.org/pypi/schema
-    :alt: Latest Version
+.. |developcover| image:: http://img.shields.io/codecov/c/github/marrow/schema/develop.svg?style=flat
+    :target: https://codecov.io/github/marrow/schema?branch=develop
+    :alt: Development test coverage.
 
-.. |downloads| image:: http://img.shields.io/pypi/dw/marrow.schema.svg?style=flat
-    :target: https://pypi.python.org/pypi/schema
-    :alt: Downloads per Week
+.. |developreq| image:: https://img.shields.io/requires/github/marrow/schema.svg
+    :target: https://requires.io/github/marrow/schema/requirements/?branch=develop
+    :alt: Status of development dependencies.
 
-.. |mastercover| image:: http://img.shields.io/coveralls/marrow/schema/master.svg?style=flat
-    :target: https://travis-ci.org/marrow/schema
-    :alt: Release Test Coverage
-
-.. |developcover| image:: http://img.shields.io/coveralls/marrow/schema/develop.svg?style=flat
-    :target: https://travis-ci.org/marrow/schema
-    :alt: Development Test Coverage
-
-.. |issuecount| image:: http://img.shields.io/github/issues/marrow/schema.svg?style=flat
+.. |issuecount| image:: http://img.shields.io/github/issues-raw/marrow/schema.svg?style=flat
     :target: https://github.com/marrow/schema/issues
     :alt: Github Issues
+
+.. |ghsince| image:: https://img.shields.io/github/commits-since/marrow/schema/1.0.svg
+    :target: https://github.com/marrow/schema/commits/develop
+    :alt: Changes since last release.
+
+.. |ghtag| image:: https://img.shields.io/github/tag/marrow/schema.svg
+    :target: https://github.com/marrow/schema/tree/1.1.1
+    :alt: Latest Github tagged release.
+
+.. |latestversion| image:: http://img.shields.io/pypi/v/marrow.schema.svg?style=flat
+    :target: https://pypi.python.org/pypi/marrow.schema
+    :alt: Latest released version.
+
+.. |downloads| image:: http://img.shields.io/pypi/dw/marrow.schema.svg?style=flat
+    :target: https://pypi.python.org/pypi/marrow.schema
+    :alt: Downloads per week.
 
 .. |cake| image:: http://img.shields.io/badge/cake-lie-1b87fb.svg?style=flat
