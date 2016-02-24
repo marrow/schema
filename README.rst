@@ -535,7 +535,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     :target: https://github.com/marrow/schema/issues
     :alt: Github Issues
 
-.. |ghsince| image:: https://img.shields.io/github/commits-since/marrow/schema/1.0.svg
+.. |ghsince| image:: https://img.shields.io/github/commits-since/marrow/schema/1.1.1.svg
     :target: https://github.com/marrow/schema/commits/develop
     :alt: Changes since last release.
 
