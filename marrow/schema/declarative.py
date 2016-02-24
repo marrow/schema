@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 
 from warnings import warn
 from inspect import isroutine
-from collections import OrderedDict as odict
+from collections import OrderedDict as odict, MutableMapping
 from .meta import Element
 
 
@@ -29,7 +29,7 @@ class Container(Element):
 	  Primary instance data storage for all DataAttribute subclass instances.  Equivalent to ``_data`` from MongoEngine.
 	"""
 	
-	__store__ = dict
+	__store__ = dict  # The callable used to produce a new self.__data__ instance. Should result in a MutableMapping.
 	
 	def __init__(self, *args, **kw):
 		"""Process arguments and assign values to instance attributes at class instantiation time.
@@ -48,6 +48,8 @@ class Container(Element):
 		
 		# Prepare the attribute value warehouse for this instance.
 		self.__data__ = self.__store__()
+		
+		assert isinstance(self.__data__, MutableMapping), "Data storage attribute __data__ must be a mutable mapping."
 		
 		# Assign valid attributes.
 		for name, value in arguments.items():
