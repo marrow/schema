@@ -12,7 +12,9 @@ Marrow Schema
 
     |latestversion| |ghtag| |downloads| |masterstatus| |mastercover| |masterreq| |ghwatch| |ghstar|
 
-.. warning:: This project is no longer Python 2 compatible, and due to the change in how namespace packages are packaged this project is directly incompatible with any other project utilizing the ``marrow`` namespace that **is** compatible. *Always pin your version ranges.*
+.. warning:: This project is no longer Python 2 compatible, and due to the change in how namespace packages are
+             packaged this project is directly incompatible with any other project utilizing the ``marrow`` namespace
+             that **is** compatible with Python 2. *Always pin your version ranges.*
 
 
 1. What is Marrow Schema?
@@ -26,7 +28,8 @@ Examples of use include:
 
 * Attribute-access dictionaries with predefined "slots".
 
-* The object mapper aspect of an ORM or ODM for database access.
+* The object mapper aspect of an ORM or ODM for database access. One example would be `Marrow Mongo
+  <https://github.com/marrow/marrow.mongo>`_
 
 * Declarative schema-driven serialization systems.
 
@@ -68,13 +71,15 @@ Installing ``marrow.schema`` is easy, just execute the following in a terminal::
     pip install marrow.schema
 
 **Note:** We *strongly* recommend always using a container, virtualization, or sandboxing environment of some kind when
-developing using Python; installing things system-wide is yucky (for a variety of reasons) nine times out of ten.  We prefer light-weight `virtualenv <https://virtualenv.pypa.io/en/latest/virtualenv.html>`_, others prefer solutions as robust as `Vagrant <http://www.vagrantup.com>`_.
+developing using Python; installing things system-wide is yucky (for a variety of reasons) nine times out of ten.  We
+prefer light-weight `virtualenv <https://virtualenv.pypa.io/en/latest/virtualenv.html>`_, others prefer solutions as
+robust as `Vagrant <http://www.vagrantup.com>`_.
 
 If you add ``marrow.schema`` to the ``install_requires`` argument of the call to ``setup()`` in your applicaiton's
 ``setup.py`` file, Marrow Schema will be automatically installed and made available when your own application or
 library is installed.  We recommend using "less than" version numbers to ensure there are no unintentional
-side-effects when updating.  Use ``marrow.schema<1.3`` to get all bugfixes for the current release, and
-``marrow.schema<2.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
+side-effects when updating.  Use ``marrow.schema<2.1`` to get all bugfixes for the current release, and
+``marrow.schema<3.0`` to get bugfixes and feature updates while ensuring that large breaking changes are not installed.
 
 
 2.1. Development Version
