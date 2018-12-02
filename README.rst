@@ -2,7 +2,7 @@
 Marrow Schema
 =============
 
-    © 2013-2016 Alice Bevan-McGregor and contributors.
+    © 2013-2018 Alice Bevan-McGregor and contributors.
 
 ..
 
@@ -12,12 +12,15 @@ Marrow Schema
 
     |latestversion| |ghtag| |downloads| |masterstatus| |mastercover| |masterreq| |ghwatch| |ghstar|
 
+.. warning:: This project is no longer Python 2 compatible, and due to the change in how namespace packages are packaged this project is directly incompatible with any other project utilizing the ``marrow`` namespace that **is** compatible. *Always pin your version ranges.*
+
+
 1. What is Marrow Schema?
 =========================
 
-Marrow Schema is a tiny and fully tested, Python 2.6+ and 3.2+ compatible declarative syntax toolkit.  This basically
-means you use high-level objects to define other high-level object data structures.  Simplified: you'll never have
-to write a class constructor that only assigns instance variables again.
+Marrow Schema is a tiny and fully tested, 3.3+ compatible declarative syntax toolkit.  This basically means you use
+high-level objects to define other high-level object data structures.  Simplified: you'll never have to write a class
+constructor that only assigns instance variables again.
 
 Examples of use include:
 
@@ -273,13 +276,11 @@ constructor::
 
 An optional integer logging level, then a message followed by zero or more additional arguments, an optional
 ``concerns`` keyword-only argument that is either not supplied or an iterable of child ``Concern`` instances, and zero
-or more additional keyword arguments.  (The keyword-only business is enforced on both Python 2 and 3.)  Compound
-validators that aggregate multiple failures (i.e. ``Pipe``) automatically determine their aggregate ``Concern`` level
-from the maximum of the child concerns.
+or more additional keyword arguments.  Compound validators that aggregate multiple failures (i.e. ``Pipe``)
+automatically determine their aggregate ``Concern`` level from the maximum of the child concerns.
 
-``Concern`` instances render to the native unicode type (``unicode`` in Python 2, ``str`` in Python 3) the result of
-calling ``message.format(*args, **kw)`` using the arguments provided above.  Care should be taken to only include
-JSON-safe datatypes in these arguments.
+``Concern`` instances render to ``str`` instances; the result of calling ``message.format(*args, **kw)`` using the
+arguments provided above.  Care should be taken to only include JSON-safe datatypes in these arguments.
 
 
 4.2. Basic Validators
@@ -482,6 +483,12 @@ Version 1.2.0
 
 * ``Container`` subclasses can now override the callable used to construct ``__data__`` on instances.
 
+Version 2.0.0
+-------------
+
+* Removed Python 2 compatibility and testing.
+* Updated to modern namespace packaging practices. This is **incompatible with any marrow project version that is Python 2 compatible**.
+
 
 6. License
 ==========
@@ -491,7 +498,7 @@ Marrow Schema has been released under the MIT Open Source license.
 6.1. The MIT License
 --------------------
 
-Copyright © 2013-2016 Alice Bevan-McGregor and contributors.
+Copyright © 2013-2018 Alice Bevan-McGregor and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the “Software”), to deal in the Software without restriction, including without limitation the
