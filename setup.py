@@ -67,10 +67,9 @@ setup(
 			"Topic :: Utilities"
 		],
 	
-	packages = find_packages(exclude=['test', 'example']),
+	packages = ('marrow.schema', ),
 	include_package_data = True,
 	package_data = {'': ['README.rst', 'LICENSE.txt']},
-	namespace_packages = ['marrow'],
 	
 	install_requires = [],
 	
