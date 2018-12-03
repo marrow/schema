@@ -48,7 +48,7 @@ class Array(Transform):
 		try:
 			return self.cast(value) if self.cast else value
 		except Exception as e:
-			raise Concern("{0} caught, failed to perform array transform: {1}", e.__class__.__name__, unicode(e))
+			raise Concern("{0} caught, failed to perform array transform: {1}", e.__class__.__name__, str(e))
 	
 	def foreign(self, value, context=None):
 		"""Construct a string-like representation for an iterable of string-like objects."""
@@ -63,7 +63,7 @@ class Array(Transform):
 		try:
 			value = separator.join(value)
 		except Exception as e:
-			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, unicode(e))
+			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, str(e))
 		
 		return super().foreign(value)
 

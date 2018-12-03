@@ -6,8 +6,6 @@ This handles the irregularities of metaclass definition and usage across Python 
 from collections import OrderedDict as odict
 
 
-# ## Metaclass Definition
-
 class ElementMeta(type):
 	"""Instantiation order tracking and attribute naming / collection metaclass.
 	

@@ -1,13 +1,9 @@
 """Convienent utilities."""
 
-# ## Imports
-
+from collections import OrderedDict as odict
 from warnings import warn
-from .compat import odict
 from .declarative import Container, Attribute
 
-
-# ## Class Definitions
 
 class Attributes(Container):
 	"""Easily access the known declarative attributes of an object, preserving definition order."""
@@ -24,8 +20,6 @@ class Attributes(Container):
 		
 		return odict((k, v) for k, v in obj.__attributes__.items() if isinstance(v, self.only))
 
-
-# ## Function Definitions
 
 def ensure_tuple(length, tuples):
 	"""Yield `length`-sized tuples from the given collection.
@@ -53,9 +47,6 @@ def ensure_tuple(length, tuples):
 		elif l < length:
 			yield (elem[0], ) * (length - l) + tuple(elem)
 
-
-# ## Deprecated Classes
-# Deprecated naming conventions; for legacy use only.
 
 class DeclarativeAttributes(Attributes):
 	"""DeclarativeAttributes is now called Attributes."""
