@@ -1,4 +1,4 @@
-from collections import Sequence
+from collections.abc import Sequence
 from numbers import Number
 
 from . import Validator, Length, Range, Instance

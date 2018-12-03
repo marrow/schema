@@ -5,7 +5,8 @@ These are the most frequently used base classes provided by Marrow Schema.
 
 from warnings import warn
 from inspect import isroutine
-from collections import OrderedDict as odict, MutableMapping, deque
+from collections import OrderedDict as odict, deque
+from collections.abc import MutableMapping
 from .meta import Element
 
 

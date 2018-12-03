@@ -1,7 +1,7 @@
 import sys
 import copy
 
-from collections import Sequence as ISequence, Mapping as IMapping, Iterable as IIterable
+from collections.abc import Sequence as ISequence, Mapping as IMapping, Iterable as IIterable
 from numbers import Number
 
 from .. import Attribute, Attributes
