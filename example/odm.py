@@ -1,7 +1,7 @@
 from decimal import Decimal as decimal, ROUND_HALF_UP
+from uri import URI
 from marrow.schema.declarative import nil, Container, Attribute
 from marrow.schema.util import Attributes
-from marrow.util.url import URL as url
 from marrow.util.convert import boolean
 from bson import ObjectId
 
@@ -46,7 +46,7 @@ class URLTransform(Transform):
         return str(value)
     
     def native(self, value):
-        return url(value)
+        return URI(value)
 
 
 class DecimalTransform(Transform):
