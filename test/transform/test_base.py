@@ -1,5 +1,5 @@
+from io import StringIO
 
-from marrow.schema.compat import native, unicode, StringIO
 from marrow.schema.exc import Concern
 from marrow.schema.testing import TransformTest
 
