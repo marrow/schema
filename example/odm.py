@@ -69,7 +69,7 @@ class Field(Attribute):
     choices = Attribute(default=None)
     
     def __init__(self, *args, **kw):
-        super(Field, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         
         # Fields that aren't required naturally default to None.
         if not self.required:
@@ -96,13 +96,13 @@ class Field(Attribute):
         
         if self.validator: self.validator(value)
         
-        super(Field, self).__set__(obj, value)
+        super().__set__(obj, value)
     
     def __delete__(self, obj):
         if self.required:
             raise ValidationError()
         
-        super(Field, self).__del__(obj)
+        super().__del__(obj)
 
 
 # Some samples.

@@ -35,7 +35,7 @@ class Array(Transform):
 		"""Convert the given string into a list of substrings."""
 		
 		separator = self.separator.strip() if self.strip and hasattr(self.separator, 'strip') else self.separator
-		value = super(Array, self).native(value, context)
+		value = super().native(value, context)
 		
 		if value is None:
 			return self.cast()
@@ -65,7 +65,7 @@ class Array(Transform):
 		except Exception as e:
 			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, unicode(e))
 		
-		return super(Array, self).foreign(value)
+		return super().foreign(value)
 
 
 array = Array()

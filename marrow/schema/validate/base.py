@@ -59,7 +59,7 @@ class AlwaysTruthy(Validator):
 	"""A value must always be truthy."""
 	
 	def validate(self, value, context=None):
-		value = super(AlwaysTruthy, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if not bool(value):
 			raise Concern("Value is missing or empty.")
@@ -76,7 +76,7 @@ class Truthy(AlwaysTruthy):
 	
 	def validate(self, value, context=None):
 		from functools import partial
-		instance = super(Truthy, self).validate if self.truthy else partial(AlwaysTruthy.validate, self)
+		instance = super().validate if self.truthy else partial(AlwaysTruthy.validate, self)
 		return instance(value, context)
 
 
@@ -84,7 +84,7 @@ class AlwaysFalsy(Validator):
 	"""A value must always be falsy."""
 	
 	def validate(self, value, context=None):
-		value = super(AlwaysFalsy, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if bool(value):
 			raise Concern("Value should be falsy.")
@@ -108,7 +108,7 @@ class AlwaysRequired(Validator):
 	"""A value must always be provided."""
 	
 	def validate(self, value, context=None):
-		value = super(AlwaysRequired, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if value is None:
 			raise Concern("Value is required, but none was provided.")
@@ -135,7 +135,7 @@ class AlwaysMissing(Validator):
 	"""A value must not be provided."""
 
 	def validate(self, value, context=None):
-		value = super(AlwaysMissing, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if value is not None and (not hasattr(value, '__len__') or len(value)):
 			raise Concern("Value must be omitted, but value was provided.")
@@ -174,7 +174,7 @@ class Callback(Validator):
 	validator = Attribute(default=None)
 	
 	def validate(self, value=None, context=None):
-		value = super(Callback, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if not self.validator:
 			return value
@@ -198,7 +198,7 @@ class In(Validator):
 	choices = CallbackAttribute(default=None)
 	
 	def validate(self, value, context=None):
-		value = super(In, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		choices = self.choices
 		
@@ -217,7 +217,7 @@ class Contains(Validator):
 	contains = CallbackAttribute()
 	
 	def validate(self, value, context=None):
-		value = super(Contains, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		# Small dance to allow None as a valid comparison value.
 		try:
@@ -244,7 +244,7 @@ class Length(Validator):
 	length = SliceAttribute(default=None)
 	
 	def validate(self, value, context=None):
-		value = super(Length, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if self.length is None:
 			return value
@@ -268,7 +268,7 @@ class Range(Validator):
 	maximum = CallbackAttribute(default=None)
 	
 	def validate(self, value, context=None):
-		value = super(Range, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if self.minimum is None and self.maximum is None:
 			return value
@@ -295,7 +295,7 @@ class Pattern(Validator):
 	pattern = RegexAttribute(default=None)
 	
 	def validate(self, value, context=None):
-		value = super(Pattern, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if not self.pattern or value is None:
 			return value
@@ -312,7 +312,7 @@ class Instance(Validator):
 	instance = Attribute(default=None)
 	
 	def validate(self, value, context=None):
-		value = super(Instance, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		if self.instance and not isinstance(value, self.instance):
 			raise Concern("Value is not an instance of {0!r}.", self.instance)
@@ -343,7 +343,7 @@ class Equal(Validator):
 	equals = CallbackAttribute()
 	
 	def validate(self, value, context=None):
-		value = super(Equal, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		# We perform this little dance to ensure None is a valid value.
 		try:
@@ -365,7 +365,7 @@ class Unique(Validator):
 	"""
 	
 	def validate(self, value, context=None):
-		value = super(Unique, self).validate(value, context)
+		value = super().validate(value, context)
 		_value = value.values() if hasattr(value, 'values') else value
 		
 		if not len(_value) == len(set(_value)):
@@ -390,4 +390,4 @@ class Validated(Attribute):
 		self.validator.validate(value, obj)
 		
 		# Store the (validated) value in the warehouse.
-		super(Validated, self).__set__(obj, value)
+		super().__set__(obj, value)

@@ -125,7 +125,7 @@ class EgressTransform(Transform):
 	egress = DataAttribute()
 	
 	def foreign(self, value, context=None):
-		value = super(EgressTransform, self).foreign(value, context)
+		value = super().foreign(value, context)
 		
 		try:
 			return self.egress(value)
@@ -151,7 +151,7 @@ class SplitTransform(BaseTransform):
 	writer = DataAttribute()
 	
 	def __init__(self, *args, **kw):
-		super(SplitTransform, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)
 		
 		try:
 			self.reader

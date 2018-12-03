@@ -25,7 +25,7 @@ class Concern(Exception):
 		self.concerns = kw.pop('concerns', [])
 		self.kwargs = kw
 		
-		super(Concern, self).__init__(*args)
+		super().__init__(*args)
 	
 	def __str__(self):
 		"""Format the validation concern for human consumption.

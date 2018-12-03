@@ -22,7 +22,7 @@ class Boolean(Transform):
 	def native(self, value, context=None):
 		"""Convert a foreign value to a native boolean."""
 		
-		value = super(Boolean, self).native(value, context)
+		value = super().native(value, context)
 		
 		if self.none and (value is None):
 			return None
@@ -76,7 +76,7 @@ class WebBoolean(Boolean):
 		if isinstance(value, (tuple, list)):
 			value = value[-1]
 		
-		return super(WebBoolean, self).native(value, context)
+		return super().native(value, context)
 
 web_boolean = WebBoolean()
 

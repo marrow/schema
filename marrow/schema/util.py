@@ -62,4 +62,4 @@ class DeclarativeAttributes(Attributes):
 	
 	def __init__(self, *args, **kw):
 		warn("Use of DeclarativeAttributes is deprecated, use Attributes instead.", DeprecationWarning)
-		super(DeclarativeAttributes, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)

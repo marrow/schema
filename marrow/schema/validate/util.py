@@ -25,9 +25,9 @@ class SliceAttribute(CallbackAttribute):
 	
 	def __set__(self, obj, value):
 		if callable(value):
-			return super(SliceAttribute, self).__set__(obj, self.__wrap(value))
+			return super().__set__(obj, self.__wrap(value))
 		
-		return super(SliceAttribute, self).__set__(obj, self.__cast(value))
+		return super().__set__(obj, self.__cast(value))
 
 
 class RegexAttribute(CallbackAttribute):
@@ -40,4 +40,4 @@ class RegexAttribute(CallbackAttribute):
 		if not hasattr(value, 'match'):
 			value = compile(value)
 		
-		return super(RegexAttribute, self).__set__(obj, value)
+		return super().__set__(obj, value)

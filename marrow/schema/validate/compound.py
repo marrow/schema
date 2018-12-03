@@ -36,7 +36,7 @@ class Any(Compound):
 	"""Evaluate multiple validators, stopping on the first success."""
 	
 	def validate(self, value, context=None):
-		value = super(Any, self).validate(value, context)
+		value = super().validate(value, context)
 		failures = []
 		
 		for validator in self._validators:
@@ -52,7 +52,7 @@ class All(Compound):
 	"""Evaluate multiple validators, requiring all to pass.  Stops on the first failure."""
 	
 	def validate(self, value, context=None):
-		value = super(All, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		for validator in self._validators:
 			value = validator.validate(value, context)
@@ -64,7 +64,7 @@ class Pipe(Compound):
 	"""Evaluate multiple validators, requiring all to pass.  Will always evaluate all validators."""
 	
 	def validate(self, value, context=None):
-		value = super(Pipe, self).validate(value, context)
+		value = super().validate(value, context)
 		failures = []
 		
 		for validator in self._validators:

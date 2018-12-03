@@ -35,7 +35,7 @@ class Position(All):
 		]
 	
 	def validate(self, value, context=None):
-		value = super(Position, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		_lat, _long = value
 		

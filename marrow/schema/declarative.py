@@ -35,7 +35,7 @@ class Container(Element):
 		"""
 		
 		# Inherit behaviour from Element, notably we want to track our instantiation sequence.
-		super(Container, self).__init__()
+		super().__init__()
 		
 		# Do the heavy lifting of merging positional and keyword arguments.
 		arguments = self._process_arguments(args, kw)
@@ -170,7 +170,7 @@ class Attribute(Container, DataAttribute):
 			kw['__name__'] = kw.pop('name')
 		
 		# Process arguments upstream.
-		super(Attribute, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)
 	
 	def __get__(self, obj, cls=None):
 		"""Executed when retrieving an Attribute instance attribute."""
@@ -181,7 +181,7 @@ class Attribute(Container, DataAttribute):
 		
 		# Attempt to retrieve the data from the warehouse.
 		try:
-			return super(Attribute, self).__get__(obj, cls)
+			return super().__get__(obj, cls)
 		except AttributeError:
 			pass
 		
@@ -218,7 +218,7 @@ class CallbackAttribute(Attribute):
 			return self
 		
 		# Attempt to retrieve the data from the warehouse.
-		value = super(CallbackAttribute, self).__get__(obj, cls)
+		value = super().__get__(obj, cls)
 		
 		# Return the value, or execute it and return the result.
 		return value() if isroutine(value) else value
@@ -232,7 +232,7 @@ class BaseAttribute(Container):
 	
 	def __init__(self, *args, **kw):
 		warn("Use of BaseAttribute is deprecated, use Container instead.", DeprecationWarning)
-		super(BaseAttribute, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)
 
 
 class BaseDataAttribute(Container):
@@ -240,4 +240,4 @@ class BaseDataAttribute(Container):
 	
 	def __init__(self, *args, **kw):
 		warn("Use of BaseDataAttribute is deprecated, use DataAttribute instead.", DeprecationWarning)
-		super(BaseDataAttribute, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)
