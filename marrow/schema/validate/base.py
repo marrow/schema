@@ -1,10 +1,4 @@
-# encoding: utf-8
-
 """Marrow Schema base classes for data validation."""
-
-# ## Imports
-
-from __future__ import unicode_literals
 
 from re import compile
 from numbers import Number

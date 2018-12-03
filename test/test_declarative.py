@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 import pytest
 from collections import OrderedDict as odict
 

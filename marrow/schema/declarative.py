@@ -1,13 +1,7 @@
-# encoding: utf-8
-
 """Marrow Schema base class definitions.
 
 These are the most frequently used base classes provided by Marrow Schema.
 """
-
-# ## Imports
-
-from __future__ import unicode_literals
 
 from warnings import warn
 from inspect import isroutine

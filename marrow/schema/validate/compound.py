@@ -1,9 +1,3 @@
-# encoding: utf-8
-
-# ## Imports
-
-from __future__ import unicode_literals
-
 import sys
 import copy
 

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 from warnings import warn
 
 # Replicate the original imports available here.

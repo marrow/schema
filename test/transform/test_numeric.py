@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from marrow.schema.testing import TransformTest
 
 from marrow.schema.transform.type import Integer, integer, Decimal, decimal, Number, number

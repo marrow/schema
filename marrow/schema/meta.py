@@ -1,13 +1,7 @@
-# encoding: utf-8
-
 """Marrow Schema metaclass definition.
 
 This handles the irregularities of metaclass definition and usage across Python versions.
 """
-
-# ## Imports
-
-from __future__ import unicode_literals
 
 from .compat import odict, native
 

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # Replicate the original imports available here.
 
 from ..validate import Validator, Callback, In, Contains, Length, Range, Pattern, Instance, Subclass, Equal

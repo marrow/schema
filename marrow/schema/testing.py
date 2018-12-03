@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 """Utilities for assisting in testing validators.
 
 These are used by Marrow Schema's validation tests and is exported for use in your own.

@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from decimal import Decimal as decimal, ROUND_HALF_UP
 from marrow.schema.declarative import nil, Container, Attribute
 from marrow.schema.util import Attributes

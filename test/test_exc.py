@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from marrow.schema.exc import Concern, WARNING, ERROR, CRITICAL
 from marrow.schema.compat import unicode
 
