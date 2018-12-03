@@ -20,11 +20,9 @@ test: develop
 	./setup.py test
 
 release:
-	./setup.py register sdist bdist_wheel upload ${RELEASE_OPTIONS}
-	@echo -e "\nView online at: https://pypi.python.org/pypi/${PROJECT} or https://pypi.org/project/${PROJECT}/"
-	@echo -e "Remember to make a release announcement and upload contents of .packaging/release folder as a Release on GitHub.\n"
+	./setup.py sdist bdist_wheel ${RELEASE_OPTIONS}
+	open .packaging
 
 ${PROJECT}.egg-info/PKG-INFO: setup.py setup.cfg marrow/schema/release.py
 	@mkdir -p ${VIRTUAL_ENV}/lib/pip-cache
 	pip install --cache-dir "${VIRTUAL_ENV}/lib/pip-cache" -e ".[${USE}]"
-
