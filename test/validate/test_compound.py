@@ -1,6 +1,5 @@
 import re
 
-from marrow.schema.compat import unicode
 from marrow.schema.testing import ValidationTest
 from marrow.schema.validate.base import *
 from marrow.schema.validate.compound import *
@@ -11,7 +10,7 @@ length = Length(slice(1, 21))
 
 class CompoundSample(Compound):
 	bar = AlwaysRequired()
-	foo = Instance(unicode)
+	foo = Instance(str)
 
 
 class SampleAny(Any, CompoundSample):
@@ -109,7 +108,7 @@ class TestFalsyIterable(ValidationTest):
 
 class TestStringyIterable(ValidationTest):
 	class Validator(Iterable):
-		stringy = Instance(unicode)
+		stringy = Instance(str)
 	
 	validator = Validator().validate
 	valid = EMPTY + STRINGS
@@ -133,7 +132,7 @@ class TestIterableConcerns(object):
 
 
 class TestMapping(ValidationTest):
-	validator = Mapping([Instance(unicode)]).validate
+	validator = Mapping([Instance(str)]).validate
 	valid = ({}, {1: 'foo', 2: 'bar'})
 	invalid = INVALID + NONMAP + ({1: 2, 2: 'baz'}, )
 

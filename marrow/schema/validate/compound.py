@@ -5,7 +5,6 @@ from collections import Sequence as ISequence, Mapping as IMapping, Iterable as 
 from numbers import Number
 
 from .. import Attribute, Attributes
-from ..compat import unicode, str
 from .base import Concern, Validator
 
 
@@ -100,7 +99,7 @@ class Iterable(Compound):
 			try:
 				validate(item, context)
 			except Concern as e:
-				e.message = "Element " + unicode(i) + ": " + e.message
+				e.message = "Element " + str(i) + ": " + e.message
 				concerns.append(e)
 		
 		if len(concerns) == 1:

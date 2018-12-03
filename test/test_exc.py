@@ -1,31 +1,30 @@
 from marrow.schema.exc import Concern, WARNING, ERROR, CRITICAL
-from marrow.schema.compat import unicode
 
 
 def test_basic_concern_text():
 	concern = Concern("This is a sample failure.")
-	assert unicode(concern) == "This is a sample failure."
+	assert str(concern) == "This is a sample failure."
 
 
 def test_basic_concern_text_replacement():
 	concern = Concern("{who} has failed me for the {times} time.", who="Bob Dole", times="last")
-	assert unicode(concern) == "Bob Dole has failed me for the last time."
+	assert str(concern) == "Bob Dole has failed me for the last time."
 
 
 def test_basic_concern_positional_replacement():
 	concern = Concern("{0} has failed me for the {1} time.", "Bob Dole", "last")
-	assert unicode(concern) == "Bob Dole has failed me for the last time."
+	assert str(concern) == "Bob Dole has failed me for the last time."
 
 
 def test_concern_level():
 	concern = Concern(CRITICAL, "This is a sample catastrophic failure.")
 	assert concern.level == CRITICAL
-	assert unicode(concern) == "This is a sample catastrophic failure."
+	assert str(concern) == "This is a sample catastrophic failure."
 	assert repr(concern) == 'Concern(CRITICAL, "This is a sample catastrophic failure.")'
 	
 	concern = Concern(WARNING, "This is a sample warning.")
 	assert concern.level == WARNING
-	assert unicode(concern) == "This is a sample warning."
+	assert str(concern) == "This is a sample warning."
 	assert repr(concern) == 'Concern(WARNING, "This is a sample warning.")'
 
 

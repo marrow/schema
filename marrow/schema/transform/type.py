@@ -1,6 +1,5 @@
 from decimal import Decimal as DecimalType
 
-from ..compat import unicode
 from .base import Concern, Transform, Attribute, CallbackTransform
 
 
@@ -84,20 +83,20 @@ web_boolean = WebBoolean()
 
 class Integer(CallbackTransform):
 	ingress = int
-	egress = unicode
+	egress = str
 
 integer = Integer()
 
 
 class Decimal(CallbackTransform):
 	ingress = DecimalType
-	egress = unicode
+	egress = str
 
 decimal = Decimal()
 
 
 class Number(CallbackTransform):
-	egress = unicode
+	egress = str
 	
 	@staticmethod
 	def ingress(value):

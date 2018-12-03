@@ -32,7 +32,7 @@ class NaiveTransform(Transform):
     An example of a Transform subclass with settings.
     """
     
-    kind = Attribute(default=unicode)
+    kind = Attribute(default=str)
     
     def __call__(self, value):
         return self.kind(value)
@@ -43,7 +43,7 @@ class NaiveTransform(Transform):
 
 class URLTransform(Transform):
     def __call__(self, value):
-        return unicode(value)
+        return str(value)
     
     def native(self, value):
         return url(value)
@@ -51,7 +51,7 @@ class URLTransform(Transform):
 
 class DecimalTransform(Transform):
     def __call__(self, value):
-        return unicode(value)
+        return str(value)
     
     def native(self, value):
         return Decimal(value)
@@ -112,7 +112,7 @@ class Identifier(Field):
 
 
 class String(Field):
-    transform = Attribute(default=NaiveTransform(unicode))
+    transform = Attribute(default=NaiveTransform(str))
     regex = Attribute(default=None)
 
 

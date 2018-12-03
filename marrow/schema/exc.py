@@ -3,8 +3,6 @@ import copy
 
 from logging import getLevelName, DEBUG, INFO, WARNING, ERROR, CRITICAL
 
-from .compat import py3, unicode
-
 
 class Concern(Exception):
 	"""There was an error validating data.
@@ -29,16 +27,12 @@ class Concern(Exception):
 		
 		super(Concern, self).__init__(*args)
 	
-	def __unicode__(self):
+	def __str__(self):
 		"""Format the validation concern for human consumption.
 		
 		We have the seemingly pointless wrapping call to unicode() here to allow for lazy translation.
 		"""
-		return unicode(self.message).format(*self.args, **self.kwargs)
-	
-	if py3:  # pragma: no cover
-		__str__ = __unicode__
-		del __unicode__
+		return str(self.message).format(*self.args, **self.kwargs)
 	
 	def __repr__(self):
 		result = '{0}({1}, "{2}")'.format(

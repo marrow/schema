@@ -1,4 +1,3 @@
-from ..compat import unicode
 from .base import Concern, Transform, Attribute
 
 

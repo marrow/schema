@@ -1,4 +1,3 @@
-from ..compat import unicode
 from .base import Concern, Transform, Attribute
 
 
@@ -22,7 +21,7 @@ class Array(Transform):
 	def _clean(self, value):
 		"""Perform a standardized pipline of operations across an iterable."""
 		
-		value = (unicode(v) for v in value)
+		value = (str(v) for v in value)
 		
 		if self.strip:
 			value = (v.strip() for v in value)

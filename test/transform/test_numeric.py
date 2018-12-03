@@ -1,7 +1,7 @@
 from marrow.schema.testing import TransformTest
 
 from marrow.schema.transform.type import Integer, integer, Decimal, decimal, Number, number
-from marrow.schema.compat import unicode
+
 
 INTS = ('1', '5', '-27')
 FLOTS = ('1.5', '-27.0', '0.0', '-0.0')

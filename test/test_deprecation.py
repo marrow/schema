@@ -22,7 +22,7 @@ def do_deprecation(value):
 		
 		assert len(w) == 1, "Only one warning should be raised."
 		assert issubclass(w[-1].category, DeprecationWarning), "Warning must be a DeprecationWarning."
-		assert dst in unicode(w[-1].message), "Warning should mention correct class to use."
+		assert dst in str(w[-1].message), "Warning should mention correct class to use."
 
 
 def test_deprecation():
@@ -46,4 +46,4 @@ def test_depreciated_validation_import():
 		
 		assert len(w) == 1, "Only one warning should be raised."
 		assert issubclass(w[-1].category, DeprecationWarning), "Warning must be DeprecationWarning."
-		assert 'marrow.schema.validate' in unicode(w[-1].message), "Warning should mention correct module to import."
+		assert 'marrow.schema.validate' in str(w[-1].message), "Warning should mention correct module to import."

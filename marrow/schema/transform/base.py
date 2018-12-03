@@ -2,7 +2,6 @@ import sys
 
 from .. import Container, DataAttribute, Attribute, Attributes
 from ..exc import Concern
-from ..compat import unicode, str
 
 
 class BaseTransform(Container):
@@ -41,7 +40,7 @@ class BaseTransform(Container):
 		if value is None:
 			return ''
 		
-		return unicode(self.foreign(value))
+		return str(self.foreign(value))
 	
 	def load(self, fh, context=None):
 		"""Attempt to transform a string-based value read from a file-like object into the native representation."""
@@ -84,7 +83,7 @@ class Transform(BaseTransform):
 		if self.none and value == '':
 			return None
 		
-		if self.encoding and isinstance(value, str):
+		if self.encoding and isinstance(value, bytes):
 			return value.decode(self.encoding)
 		
 		return value
@@ -110,14 +109,14 @@ class IngressTransform(Transform):
 	def native(self, value, context=None):
 		"""Convert a value from a foriegn type (i.e. web-safe) to Python-native."""
 		
-		value = super(IngressTransform, self).native(value, context)
+		value = super().native(value, context)
 		
 		if value is None: return
 		
 		try:
 			return self.ingress(value)
 		except Exception as e:
-			raise Concern("Unable to transform incoming value: {0}", unicode(e))
+			raise Concern("Unable to transform incoming value: {0}", str(e))
 
 
 class EgressTransform(Transform):
@@ -131,7 +130,7 @@ class EgressTransform(Transform):
 		try:
 			return self.egress(value)
 		except Exception as e:
-			raise Concern("Unable to transform outgoing value: {0}", unicode(e))
+			raise Concern("Unable to transform outgoing value: {0}", str(e))
 
 
 class CallbackTransform(IngressTransform, EgressTransform):

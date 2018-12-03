@@ -1,7 +1,6 @@
 import re
 from inspect import isroutine
 
-from ..compat import unicode
 from .base import Concern, Transform, DataAttribute, Attribute
 
 
