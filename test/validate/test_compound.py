@@ -1,8 +1,8 @@
 import re
 
 from marrow.schema.testing import ValidationTest
-from marrow.schema.validate.base import *
-from marrow.schema.validate.compound import *
+from marrow.schema.validate.base import AlwaysRequired, Instance, Length, falsy, truthy, Concern
+from marrow.schema.validate.compound import All, Any, Compound, Iterable, Mapping, Pipe
 
 
 length = Length(slice(1, 21))

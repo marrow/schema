@@ -1,8 +1,9 @@
 import re
 
-from marrow.schema import Attribute, Container
+from marrow.schema import Attribute, Concern, Container
 from marrow.schema.testing import ValidationTest
-from marrow.schema.validate.base import *
+from marrow.schema.validate.base import Always, Callback, Contains, Equal, Falsy, In, Instance, Length, Missing, \
+		Never, Pattern, Range, Required, Subclass, Truthy, Unique, Validated, Validator
 
 
 class TestAlways(ValidationTest):
