@@ -30,7 +30,7 @@ class Concern(Exception):
 	def __str__(self):
 		"""Format the validation concern for human consumption.
 		
-		We have the seemingly pointless wrapping call to unicode() here to allow for lazy translation.
+		We have the seemingly pointless wrapping call to str() here to allow for lazy translation.
 		"""
 		return str(self.message).format(*self.args, **self.kwargs)
 	
@@ -38,7 +38,7 @@ class Concern(Exception):
 		result = '{0}({1}, "{2}")'.format(
 				self.__class__.__name__,
 				getLevelName(self.level),
-				unicode(self).replace('"', '\"')
+				str(self).replace('"', '\"')
 			)
 		
 		return result
