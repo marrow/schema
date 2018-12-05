@@ -110,4 +110,5 @@ class ElementMeta(type):
 		return instance
 
 
-Element = ElementMeta("Element", (object, ), dict())
+class Element(metaclass=ElementMeta):
+	pass
