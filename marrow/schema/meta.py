@@ -1,18 +1,10 @@
-# encoding: utf-8
-
 """Marrow Schema metaclass definition.
 
 This handles the irregularities of metaclass definition and usage across Python versions.
 """
 
-# ## Imports
+from collections import OrderedDict as odict
 
-from __future__ import unicode_literals
-
-from .compat import odict, native
-
-
-# ## Metaclass Definition
 
 class ElementMeta(type):
 	"""Instantiation order tracking and attribute naming / collection metaclass.
@@ -55,7 +47,7 @@ class ElementMeta(type):
 		# Short-circuit this logic on the root "Element" class, as it can have no attributes.
 		if len(bases) == 1 and bases[0] is object:
 			attrs['__attributes__'] = odict()
-			return type.__new__(meta, native(name), bases, attrs)
+			return type.__new__(meta, str(name), bases, attrs)
 		
 		attributes = odict()
 		overridden_sequence = dict()
@@ -95,7 +87,7 @@ class ElementMeta(type):
 		attrs['__attributes__'] = odict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
 		
 		# Construct the new class.
-		cls = type.__new__(meta, native(name), bases, attrs)
+		cls = type.__new__(meta, str(name), bases, attrs)
 		
 		# Allow the class to be notified of its own construction.  Do not ask how this avoids creating black holes.
 		if hasattr(cls, '__attributed__'):

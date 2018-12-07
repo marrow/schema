@@ -1,11 +1,7 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from decimal import Decimal as decimal, ROUND_HALF_UP
+from uri import URI
 from marrow.schema.declarative import nil, Container, Attribute
 from marrow.schema.util import Attributes
-from marrow.util.url import URL as url
 from marrow.util.convert import boolean
 from bson import ObjectId
 
@@ -36,7 +32,7 @@ class NaiveTransform(Transform):
     An example of a Transform subclass with settings.
     """
     
-    kind = Attribute(default=unicode)
+    kind = Attribute(default=str)
     
     def __call__(self, value):
         return self.kind(value)
@@ -47,15 +43,15 @@ class NaiveTransform(Transform):
 
 class URLTransform(Transform):
     def __call__(self, value):
-        return unicode(value)
+        return str(value)
     
     def native(self, value):
-        return url(value)
+        return URI(value)
 
 
 class DecimalTransform(Transform):
     def __call__(self, value):
-        return unicode(value)
+        return str(value)
     
     def native(self, value):
         return Decimal(value)
@@ -73,7 +69,7 @@ class Field(Attribute):
     choices = Attribute(default=None)
     
     def __init__(self, *args, **kw):
-        super(Field, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         
         # Fields that aren't required naturally default to None.
         if not self.required:
@@ -100,13 +96,13 @@ class Field(Attribute):
         
         if self.validator: self.validator(value)
         
-        super(Field, self).__set__(obj, value)
+        super().__set__(obj, value)
     
     def __delete__(self, obj):
         if self.required:
             raise ValidationError()
         
-        super(Field, self).__del__(obj)
+        super().__del__(obj)
 
 
 # Some samples.
@@ -116,7 +112,7 @@ class Identifier(Field):
 
 
 class String(Field):
-    transform = Attribute(default=NaiveTransform(unicode))
+    transform = Attribute(default=NaiveTransform(str))
     regex = Attribute(default=None)
 
 

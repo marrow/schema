@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 from marrow.schema.declarative import Container, Attribute
 from marrow.schema.util import Attributes, ensure_tuple
 

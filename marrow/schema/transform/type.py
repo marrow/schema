@@ -1,10 +1,5 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from decimal import Decimal as DecimalType
 
-from ..compat import unicode
 from .base import Concern, Transform, Attribute, CallbackTransform
 
 
@@ -27,7 +22,7 @@ class Boolean(Transform):
 	def native(self, value, context=None):
 		"""Convert a foreign value to a native boolean."""
 		
-		value = super(Boolean, self).native(value, context)
+		value = super().native(value, context)
 		
 		if self.none and (value is None):
 			return None
@@ -81,27 +76,27 @@ class WebBoolean(Boolean):
 		if isinstance(value, (tuple, list)):
 			value = value[-1]
 		
-		return super(WebBoolean, self).native(value, context)
+		return super().native(value, context)
 
 web_boolean = WebBoolean()
 
 
 class Integer(CallbackTransform):
 	ingress = int
-	egress = unicode
+	egress = str
 
 integer = Integer()
 
 
 class Decimal(CallbackTransform):
 	ingress = DecimalType
-	egress = unicode
+	egress = str
 
 decimal = Decimal()
 
 
 class Number(CallbackTransform):
-	egress = unicode
+	egress = str
 	
 	@staticmethod
 	def ingress(value):

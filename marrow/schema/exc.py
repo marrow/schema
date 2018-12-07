@@ -1,13 +1,7 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 import sys
 import copy
 
 from logging import getLevelName, DEBUG, INFO, WARNING, ERROR, CRITICAL
-
-from .compat import py3, unicode
 
 
 class Concern(Exception):
@@ -31,24 +25,20 @@ class Concern(Exception):
 		self.concerns = kw.pop('concerns', [])
 		self.kwargs = kw
 		
-		super(Concern, self).__init__(*args)
+		super().__init__(*args)
 	
-	def __unicode__(self):
+	def __str__(self):
 		"""Format the validation concern for human consumption.
 		
-		We have the seemingly pointless wrapping call to unicode() here to allow for lazy translation.
+		We have the seemingly pointless wrapping call to str() here to allow for lazy translation.
 		"""
-		return unicode(self.message).format(*self.args, **self.kwargs)
-	
-	if py3:  # pragma: no cover
-		__str__ = __unicode__
-		del __unicode__
+		return str(self.message).format(*self.args, **self.kwargs)
 	
 	def __repr__(self):
 		result = '{0}({1}, "{2}")'.format(
 				self.__class__.__name__,
 				getLevelName(self.level),
-				unicode(self).replace('"', '\"')
+				str(self).replace('"', '\"')
 			)
 		
 		return result

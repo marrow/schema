@@ -1,8 +1,5 @@
-# encoding: utf-8
+from io import StringIO
 
-from __future__ import unicode_literals
-
-from marrow.schema.compat import native, unicode, StringIO
 from marrow.schema.exc import Concern
 from marrow.schema.testing import TransformTest
 
@@ -12,7 +9,7 @@ from marrow.schema.transform.base import BaseTransform, Transform, IngressTransf
 PASSTHROUGH = (None, False, True, "", "Foo", 27, 42.0, [], {})
 ST = SplitTransform(
 		reader = IngressTransform(ingress=int),
-		writer = EgressTransform(egress=unicode)
+		writer = EgressTransform(egress=str)
 	)
 
 
@@ -24,7 +21,7 @@ class TestForeignPassthrough(TransformTest):
 		assert BaseTransform().loads('') is None
 	
 	def test_load(self):
-		assert BaseTransform().load(StringIO(native("bar"))) == "bar"
+		assert BaseTransform().load(StringIO(str("bar"))) == "bar"
 
 
 class TestNativePassthrough(TransformTest):
@@ -46,7 +43,7 @@ class TestTransform(TransformTest):
 	
 	def test_decoding(self):
 		result = self.transform('Zoë'.encode('utf8'))
-		assert isinstance(result, unicode)
+		assert isinstance(result, str)
 		assert result == 'Zoë'
 
 
@@ -61,8 +58,8 @@ class TestIngress(TransformTest):
 		try:
 			self.transform('x')
 		except Concern as e:
-			assert self.direction in unicode(e)
-			assert 'invalid literal' in unicode(e)
+			assert self.direction in str(e)
+			assert 'invalid literal' in str(e)
 
 
 class TestEgress(TestIngress):
@@ -89,7 +86,7 @@ class TestSplitTransformReader(TransformTest):
 		assert ST.loads('') is None
 	
 	def test_load(self):
-		assert ST.load(StringIO(native("42"))) == 42
+		assert ST.load(StringIO(str("42"))) == 42
 
 
 class TestSplitTransformWriter(TransformTest):
