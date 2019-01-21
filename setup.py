@@ -4,10 +4,7 @@ import os
 import sys
 import codecs
 
-try:
-	from setuptools.core import setup
-except ImportError:
-	from setuptools import setup
+from setuptools import setup
 
 
 if sys.version_info < (3, 3):
@@ -53,6 +50,7 @@ setup(
 	packages = ('marrow.schema', ),
 	include_package_data = True,
 	package_data = {'': ['README.rst', 'LICENSE.txt']},
+	zip_safe = False,
 	
 	setup_requires = [
 			'pytest-runner',
@@ -65,6 +63,4 @@ setup(
 		),
 	
 	tests_require = tests_require,
-	
-	zip_safe = False,
 )
