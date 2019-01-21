@@ -112,3 +112,6 @@ class ElementMeta(type):
 
 
 Element = ElementMeta("Element", (object, ), dict())
+
+class Element(metaclass=ElementMeta):
+	pass

@@ -10,8 +10,6 @@ from collections.abc import MutableMapping
 from .meta import Element
 
 
-# ## Class Definitions
-
 class Container(Element):
 	"""The underlying machinery for handling class instantiation for schema elements whose primary purpose is
 	containing other schema elements, i.e. Document, Record, CompoundWidget, etc.
