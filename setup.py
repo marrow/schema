@@ -5,13 +5,13 @@ from sys import argv, version_info as python_version
 from pathlib import Path
 
 
-if python_version < (3, 3):
-	raise SystemExit("Python 3.3 or later is required.")
+if python_version < (3, 5):
+	raise SystemExit("Python 3.5 or later is required.")
 
 here = Path.cwd()
 exec((here / "marrow" / "schema" / "release.py").read_text('utf-8'))
 
-tests_require = ['pytest', 'pytest-cov', 'pytest-spec', 'pytest-flakes']
+tests_require = ['pytest', 'pytest-cov', 'pytest-flakes', 'pytest-isort']
 
 
 setup(
@@ -34,8 +34,6 @@ setup(
 			"Operating System :: OS Independent",
 			"Programming Language :: Python",
 			"Programming Language :: Python :: 3",
-			"Programming Language :: Python :: 3.3",
-			"Programming Language :: Python :: 3.4",
 			"Programming Language :: Python :: 3.5",
 			"Programming Language :: Python :: 3.6",
 			"Programming Language :: Python :: 3.7",
