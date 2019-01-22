@@ -1,11 +1,6 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 import re
 from inspect import isroutine
 
-from ..compat import unicode
 from .base import Concern, Transform, DataAttribute, Attribute
 
 
@@ -66,7 +61,7 @@ class Token(Transform):
 	pattern = TokenPatternAttribute()
 	
 	def native(self, value, context=None):
-		value = super(Token, self).native(value, context)
+		value = super().native(value, context)
 		
 		if value is None:
 			return None
@@ -107,7 +102,7 @@ class Token(Transform):
 		return self.group([[match for match in groups[group]] for group in self.groups])
 	
 	def foreign(self, value, context=None):
-		value = super(Token, self).foreign(value, context)
+		value = super().foreign(value, context)
 		
 		if value is None:
 			return None
@@ -157,10 +152,10 @@ class DateTimeTransform(Transform):
 		if not value:
 			return ''
 		
-		return super(DateTimeTransform, self)(value.strftime(self.format))
+		return super()(value.strftime(self.format))
 	
 	def native(self, value):
-		value = super(DateTimeTransform, self).native(value)
+		value = super().native(value)
 		
 		return self.base.strptime(value, self.format)
 '''

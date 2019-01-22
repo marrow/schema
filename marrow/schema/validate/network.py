@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from re import compile, I, U
 
 from . import Validator, Pattern, Length

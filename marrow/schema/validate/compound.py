@@ -1,17 +1,10 @@
-# encoding: utf-8
-
-# ## Imports
-
-from __future__ import unicode_literals
-
 import sys
 import copy
 
-from collections import Sequence as ISequence, Mapping as IMapping, Iterable as IIterable
+from collections.abc import Sequence as ISequence, Mapping as IMapping, Iterable as IIterable
 from numbers import Number
 
 from .. import Attribute, Attributes
-from ..compat import unicode, str
 from .base import Concern, Validator
 
 
@@ -43,7 +36,7 @@ class Any(Compound):
 	"""Evaluate multiple validators, stopping on the first success."""
 	
 	def validate(self, value, context=None):
-		value = super(Any, self).validate(value, context)
+		value = super().validate(value, context)
 		failures = []
 		
 		for validator in self._validators:
@@ -59,7 +52,7 @@ class All(Compound):
 	"""Evaluate multiple validators, requiring all to pass.  Stops on the first failure."""
 	
 	def validate(self, value, context=None):
-		value = super(All, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		for validator in self._validators:
 			value = validator.validate(value, context)
@@ -71,7 +64,7 @@ class Pipe(Compound):
 	"""Evaluate multiple validators, requiring all to pass.  Will always evaluate all validators."""
 	
 	def validate(self, value, context=None):
-		value = super(Pipe, self).validate(value, context)
+		value = super().validate(value, context)
 		failures = []
 		
 		for validator in self._validators:
@@ -106,7 +99,7 @@ class Iterable(Compound):
 			try:
 				validate(item, context)
 			except Concern as e:
-				e.message = "Element " + unicode(i) + ": " + e.message
+				e.message = "Element " + str(i) + ": " + e.message
 				concerns.append(e)
 		
 		if len(concerns) == 1:

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 from ..validate.pattern import Alphanumeric, alphanumeric
 from ..validate.pattern import Username, username
 from ..validate.pattern import TwitterUsername, twitterusername

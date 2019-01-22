@@ -1,8 +1,3 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
-from ..compat import unicode
 from .base import Concern, Transform, Attribute
 
 
@@ -26,7 +21,7 @@ class Array(Transform):
 	def _clean(self, value):
 		"""Perform a standardized pipline of operations across an iterable."""
 		
-		value = (unicode(v) for v in value)
+		value = (str(v) for v in value)
 		
 		if self.strip:
 			value = (v.strip() for v in value)
@@ -40,7 +35,7 @@ class Array(Transform):
 		"""Convert the given string into a list of substrings."""
 		
 		separator = self.separator.strip() if self.strip and hasattr(self.separator, 'strip') else self.separator
-		value = super(Array, self).native(value, context)
+		value = super().native(value, context)
 		
 		if value is None:
 			return self.cast()
@@ -53,7 +48,7 @@ class Array(Transform):
 		try:
 			return self.cast(value) if self.cast else value
 		except Exception as e:
-			raise Concern("{0} caught, failed to perform array transform: {1}", e.__class__.__name__, unicode(e))
+			raise Concern("{0} caught, failed to perform array transform: {1}", e.__class__.__name__, str(e))
 	
 	def foreign(self, value, context=None):
 		"""Construct a string-like representation for an iterable of string-like objects."""
@@ -68,9 +63,9 @@ class Array(Transform):
 		try:
 			value = separator.join(value)
 		except Exception as e:
-			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, unicode(e))
+			raise Concern("{0} caught, failed to convert to string: {1}", e.__class__.__name__, str(e))
 		
-		return super(Array, self).foreign(value)
+		return super().foreign(value)
 
 
 array = Array()

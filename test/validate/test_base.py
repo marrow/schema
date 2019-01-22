@@ -1,13 +1,9 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 import re
 
-from marrow.schema import Attribute, Container
-from marrow.schema.compat import unicode
+from marrow.schema import Attribute, Concern, Container
 from marrow.schema.testing import ValidationTest
-from marrow.schema.validate.base import *
+from marrow.schema.validate.base import Always, Callback, Contains, Equal, Falsy, In, Instance, Length, Missing, \
+		Never, Pattern, Range, Required, Subclass, Truthy, Unique, Validated, Validator
 
 
 class TestAlways(ValidationTest):
@@ -70,7 +66,7 @@ class TestCallbacks(object):
 		try:
 			self.raises.validate(None)
 		except Concern as e:
-			assert unicode(e) == "Oh my no."
+			assert str(e) == "Oh my no."
 		else:
 			assert False, "Failed to raise a Concern."
 
@@ -109,7 +105,7 @@ class TestContains(object):
 		try:
 			validator.validate([1, 2, 3])
 		except Concern as e:
-			assert unicode(e).startswith("Value does not contain: ")
+			assert str(e).startswith("Value does not contain: ")
 		else:
 			assert False, "Failed to raise a Concern."
 	
@@ -220,7 +216,7 @@ class TestPattern(object):
 
 class TestInstance(object):
 	empty = Instance()
-	uni = Instance(unicode)
+	uni = Instance(str)
 	
 	def test_empty(self):
 		assert self.empty.validate('') == ''

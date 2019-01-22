@@ -1,6 +1,4 @@
-# encoding: utf-8
-
-from collections import Sequence
+from collections.abc import Sequence
 from numbers import Number
 
 from . import Validator, Length, Range, Instance
@@ -37,7 +35,7 @@ class Position(All):
 		]
 	
 	def validate(self, value, context=None):
-		value = super(Position, self).validate(value, context)
+		value = super().validate(value, context)
 		
 		_lat, _long = value
 		

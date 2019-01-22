@@ -1,21 +1,14 @@
-# encoding: utf-8
-
 """Marrow Schema base class definitions.
 
 These are the most frequently used base classes provided by Marrow Schema.
 """
 
-# ## Imports
-
-from __future__ import unicode_literals
-
 from warnings import warn
 from inspect import isroutine
-from collections import OrderedDict as odict, MutableMapping, deque
+from collections import OrderedDict as odict, deque
+from collections.abc import MutableMapping
 from .meta import Element
 
-
-# ## Class Definitions
 
 class Container(Element):
 	"""The underlying machinery for handling class instantiation for schema elements whose primary purpose is
@@ -41,7 +34,7 @@ class Container(Element):
 		"""
 		
 		# Inherit behaviour from Element, notably we want to track our instantiation sequence.
-		super(Container, self).__init__()
+		super().__init__()
 		
 		# Do the heavy lifting of merging positional and keyword arguments.
 		arguments = self._process_arguments(args, kw)
@@ -176,7 +169,7 @@ class Attribute(Container, DataAttribute):
 			kw['__name__'] = kw.pop('name')
 		
 		# Process arguments upstream.
-		super(Attribute, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)
 	
 	def __get__(self, obj, cls=None):
 		"""Executed when retrieving an Attribute instance attribute."""
@@ -187,7 +180,7 @@ class Attribute(Container, DataAttribute):
 		
 		# Attempt to retrieve the data from the warehouse.
 		try:
-			return super(Attribute, self).__get__(obj, cls)
+			return super().__get__(obj, cls)
 		except AttributeError:
 			pass
 		
@@ -224,7 +217,7 @@ class CallbackAttribute(Attribute):
 			return self
 		
 		# Attempt to retrieve the data from the warehouse.
-		value = super(CallbackAttribute, self).__get__(obj, cls)
+		value = super().__get__(obj, cls)
 		
 		# Return the value, or execute it and return the result.
 		return value() if isroutine(value) else value
@@ -238,7 +231,7 @@ class BaseAttribute(Container):
 	
 	def __init__(self, *args, **kw):
 		warn("Use of BaseAttribute is deprecated, use Container instead.", DeprecationWarning)
-		super(BaseAttribute, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)
 
 
 class BaseDataAttribute(Container):
@@ -246,4 +239,4 @@ class BaseDataAttribute(Container):
 	
 	def __init__(self, *args, **kw):
 		warn("Use of BaseDataAttribute is deprecated, use DataAttribute instead.", DeprecationWarning)
-		super(BaseDataAttribute, self).__init__(*args, **kw)
+		super().__init__(*args, **kw)

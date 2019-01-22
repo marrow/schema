@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import unicode_literals
-
 from functools import partial
 from random import choice, randrange
 from string import ascii_letters as letters, digits, punctuation, whitespace
