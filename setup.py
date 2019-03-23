@@ -8,7 +8,7 @@ from pathlib import Path
 if python_version < (3, 5):
 	raise SystemExit("Python 3.5 or later is required.")
 
-here = Path.cwd()
+here = Path(__file__).resolve().parent
 exec((here / "marrow" / "schema" / "release.py").read_text('utf-8'))
 
 tests_require = ['pytest', 'pytest-cov', 'pytest-flakes', 'pytest-isort']
