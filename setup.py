@@ -52,7 +52,9 @@ setup(
 			'pytest-runner',
 		] if {'pytest', 'test', 'ptr'}.intersection(argv) else [],
 	
-	install_requires = [],
+	install_requires = [
+			"typeguard>=2.3.0,<4.0",
+		],
 	
 	extras_require = dict(
 			development = tests_require,
