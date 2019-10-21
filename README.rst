@@ -2,7 +2,7 @@
 Marrow Schema
 =============
 
-    © 2013-2018 Alice Bevan-McGregor and contributors.
+    © 2013-2019 Alice Bevan-McGregor and contributors.
 
 ..
 
@@ -503,7 +503,7 @@ Marrow Schema has been released under the MIT Open Source license.
 6.1. The MIT License
 --------------------
 
-Copyright © 2013-2018 Alice Bevan-McGregor and contributors.
+Copyright © 2013-2019 Alice Bevan-McGregor and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the “Software”), to deal in the Software without restriction, including without limitation the
