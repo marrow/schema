@@ -86,6 +86,8 @@ class ElementMeta(type):
 		# Iteratively process the Element subclass instances and update their definition.
 		attributes.update(process(k, v) for k, v in attrs.items() if isinstance(v, Element))
 		attrs['__attributes__'] = odict(sorted(attributes.items(), key=lambda t: t[1].__sequence__))
+		attrs.setdefault('__annotations__', dict())
+		attrs['__annotations__'].update({k: v.annotation for k, v in attributes.items() if hasattr(v, 'annotation')})
 		
 		# Construct the new class.
 		cls = type.__new__(meta, str(name), bases, attrs)
