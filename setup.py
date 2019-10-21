@@ -11,7 +11,7 @@ if python_version < (3, 5):
 here = Path(__file__).resolve().parent
 exec((here / "marrow" / "schema" / "release.py").read_text('utf-8'))
 
-tests_require = ['pytest', 'pytest-cov', 'pytest-flakes', 'pytest-isort']
+tests_require = ['pytest', 'pytest-cov', 'pytest-flakes', 'pytest-isort', 'bandit']
 
 
 setup(
@@ -53,7 +53,7 @@ setup(
 		] if {'pytest', 'test', 'ptr'}.intersection(argv) else [],
 	
 	install_requires = [
-			"typeguard>=2.3.0,<4.0",
+			'typeguard>=2.3.0,<4.0',
 		],
 	
 	extras_require = dict(
