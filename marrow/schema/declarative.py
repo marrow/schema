@@ -10,8 +10,6 @@ from collections.abc import MutableMapping
 from .meta import Element
 
 
-# ## Class Definitions
-
 class Container(Element):
 	"""The underlying machinery for handling class instantiation for schema elements whose primary purpose is
 	containing other schema elements, i.e. Document, Record, CompoundWidget, etc.
@@ -112,7 +110,12 @@ class DataAttribute(Element):
 	The base attribute class which implements the descriptor protocol, pulling the instance value of the attribute from
 	the containing object's ``__data__`` dictionary.  If an attempt is made to read an attribute that does not have a
 	corresponding value in the data dictionary an ``AttributeError`` will be raised.
+	
+	Python type annotations relating to the value read/written on instances may be declared as the `annotation`. This
+	will be used to populate the class `__annotations__` for any class an instance of this is assigned to.
 	"""
+	
+	annotation = None
 	
 	def __get__(self, obj, cls=None):
 		"""Executed when retrieving a DataAttribute instance attribute."""

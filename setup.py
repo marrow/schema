@@ -1,30 +1,25 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import codecs
-
-try:
-	from setuptools.core import setup
-except ImportError:
-	from setuptools import setup
+from setuptools import setup
+from sys import argv, version_info as python_version
+from pathlib import Path
 
 
-if sys.version_info < (3, 3):
-	raise SystemExit("Python 3.3 or later is required.")
+if python_version < (3, 5):
+	raise SystemExit("Python 3.5 or later is required.")
 
-exec(open(os.path.join("marrow", "schema", "release.py")).read())
+here = Path(__file__).resolve().parent
+exec((here / "marrow" / "schema" / "release.py").read_text('utf-8'))
 
-here = os.path.abspath(os.path.dirname(__file__))
+tests_require = ['pytest', 'pytest-cov', 'pytest-flakes', 'pytest-isort', 'bandit']
 
-tests_require = ['pytest', 'pytest-cov', 'pytest-spec', 'pytest-flakes']
 
 setup(
 	name = "marrow.schema",
 	version = version,
 	
 	description = description,
-	long_description = codecs.open(os.path.join(here, 'README.rst'), 'r', 'utf8').read(),
+	long_description = (here / 'README.rst').read_text('utf-8'),
 	url = url,
 	
 	author = author.name,
@@ -39,8 +34,6 @@ setup(
 			"Operating System :: OS Independent",
 			"Programming Language :: Python",
 			"Programming Language :: Python :: 3",
-			"Programming Language :: Python :: 3.3",
-			"Programming Language :: Python :: 3.4",
 			"Programming Language :: Python :: 3.5",
 			"Programming Language :: Python :: 3.6",
 			"Programming Language :: Python :: 3.7",
@@ -53,18 +46,19 @@ setup(
 	packages = ('marrow.schema', ),
 	include_package_data = True,
 	package_data = {'': ['README.rst', 'LICENSE.txt']},
+	zip_safe = False,
 	
 	setup_requires = [
 			'pytest-runner',
-		] if {'pytest', 'test', 'ptr'}.intersection(sys.argv) else [],
+		] if {'pytest', 'test', 'ptr'}.intersection(argv) else [],
 	
-	install_requires = [],
+	install_requires = [
+			'typeguard>=2.3.0,<4.0',
+		],
 	
 	extras_require = dict(
 			development = tests_require,
 		),
 	
 	tests_require = tests_require,
-	
-	zip_safe = False,
 )
