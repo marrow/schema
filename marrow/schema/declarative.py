@@ -223,22 +223,3 @@ class CallbackAttribute(Attribute):
 		
 		# Return the value, or execute it and return the result.
 		return value() if isroutine(value) else value
-
-
-# ## Deprecated Classes
-# Deprecated naming conventions; for legacy use only.
-
-class BaseAttribute(Container):
-	"""BaseAttribute is now called Container."""
-	
-	def __init__(self, *args, **kw):
-		warn("Use of BaseAttribute is deprecated, use Container instead.", DeprecationWarning)
-		super().__init__(*args, **kw)
-
-
-class BaseDataAttribute(Container):
-	"""BaseDataAttribute is now called DataAttribute."""
-	
-	def __init__(self, *args, **kw):
-		warn("Use of BaseDataAttribute is deprecated, use DataAttribute instead.", DeprecationWarning)
-		super().__init__(*args, **kw)

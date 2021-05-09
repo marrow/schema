@@ -27,7 +27,8 @@ class ElementMeta(type):
 	  
 	* `cls.__attributed__`
 	  Called after class construction to allow you to easily perform additional work, post-annotation.
-	  Should be a classmethod for full effect.
+	  Should be a classmethod for full effect. Deprecated for many use cases; use Python's own `__init_subclass__`
+	  instead. (This also allows arguments to be passed within the class definition, which is more flexible.)
 	  
 	* `cls.__fixup__`
 	  If an instance of your Element subclass is assigned as a property to an Element subclass, this method of your
