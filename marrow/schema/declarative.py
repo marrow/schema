@@ -111,11 +111,11 @@ class DataAttribute(Element):
 	the containing object's ``__data__`` dictionary.  If an attempt is made to read an attribute that does not have a
 	corresponding value in the data dictionary an ``AttributeError`` will be raised.
 	
-	Python type annotations relating to the value read/written on instances may be declared as the `annotation`. This
-	will be used to populate the class `__annotations__` for any class an instance of this is assigned to.
+	Python type annotations relating to the value read/written on instances may be declared as the `__annotation__`.
+	This will be used to populate the class `__annotations__` for any class an instance of this is assigned to.
 	"""
 	
-	annotation = None
+	__annotation__ = None
 	
 	def __get__(self, obj, cls=None):
 		"""Executed when retrieving a DataAttribute instance attribute."""

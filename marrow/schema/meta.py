@@ -10,7 +10,7 @@ class ElementMeta(type):
 	"""Instantiation order tracking and attribute naming / collection metaclass.
 	
 	To use, construct subclasses of the Element class whose attributes are themselves instances of Element subclasses.
-	Five attributes on your subclass have magical properties:
+	A number of attributes on your subclass have magical properties:
 	
 	* `inst.__sequence__`
 	  An atomically incrementing (for the life of the process) counter used to preserve order.  Each instance of an
@@ -34,6 +34,9 @@ class ElementMeta(type):
 	  If an instance of your Element subclass is assigned as a property to an Element subclass, this method of your
 	  class will be called to notify you and allow you to make additional adjustments to the class using your subclass.
 	  Should be a classmethod.
+	
+	* `cls.__annotation__`
+	  The Python 3 type annotation to utilize as the "instance attribute type" for this element.
 	
 	Generally you will want to use one of the helper classes provided (Container, Attribute, etc.) however this can be
 	useful if you only require extremely light-weight attribute features on custom objects.
@@ -89,8 +92,8 @@ class ElementMeta(type):
 		ann = attrs.setdefault('__annotations__', dict())
 		
 		for k, v in attributes.items():
-			if not hasattr(v, 'annotation'): continue  # Skip missing or None annotations.
-			ann.setdefault(k, v.annotation)  # If an annotation is already set (explicitly by the developer), skip.
+			if not hasattr(v, '__annotation__'): continue  # Skip missing or None annotations.
+			ann.setdefault(k, v.__annotation__)  # If an annotation is already set (explicitly by the developer), skip.
 		
 		# Construct the new class.
 		cls = type.__new__(meta, str(name), bases, attrs)
