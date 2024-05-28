@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from sys import argv, version_info as python_version
 from pathlib import Path
 
@@ -43,7 +43,7 @@ setup(
 			"Topic :: Utilities"
 		],
 	
-	packages = ('marrow.schema', ),
+	packages = find_packages(),
 	include_package_data = True,
 	package_data = {'': ['README.rst', 'LICENSE.txt']},
 	zip_safe = False,
